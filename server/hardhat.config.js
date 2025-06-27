@@ -1,6 +1,6 @@
 const { task } = require("hardhat/config");
 
-require("@nomiclabs/hardhat-waffle");
+require("@nomicfoundation/hardhat-toolbox");
 require('dotenv').config()
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {

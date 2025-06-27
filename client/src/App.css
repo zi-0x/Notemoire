@@ -1,0 +1,50 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 50vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation:hinge 2s ease-in-out forwards;
+  }
+}
+
+.App-header {
+  background-color: #bb2b7a;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(25px + 2vmin);
+  color: #f9f1cf;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes hinge {
+  0% {
+    transform: rotate(0);
+    transform-origin: top left;
+    opacity: 1;
+  }
+  45% {
+    transform: rotate(0);
+    transform-origin: top left;
+    opacity: 1;
+  }
+  80% {
+    transform: rotate(35deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(600px);
+    opacity: 0;
+  }
+}
