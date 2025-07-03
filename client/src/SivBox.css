@@ -1,0 +1,54 @@
+.sivBox {
+    padding-bottom: 10px;
+    border-bottom: 8px solid  #d477aa;
+;
+    padding-right: 10px;
+  }
+  
+  .sivBox > form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sivBox__input {
+    padding: 20px;
+    display: flex;
+  }
+  
+  .sivBox__input > input {
+    flex: 1;
+    margin-left: 20px;
+    font-size: 20px;
+    border: none;
+  }
+  
+  .sivBox__imageInput {
+    border: none;
+    padding: 10px;
+  }
+  
+  .sivBox__tweetButton {
+    background-color: #bb2b7a !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 900 !important;
+    text-transform: inherit !important;
+    border-radius: 30px !important;
+    width: 80px;
+    height: 40px !important;
+    margin-top: 20px !important;
+    margin-left: auto !important;
+  }
+
+  .sivBox__addVote{
+    background-color: #bb2b7a !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 900 !important;
+    text-transform: inherit !important;
+    border-radius: 30px !important;
+    width: 100px;
+    height: 40px !important;
+    margin-top: -40px !important;
+    margin-left: 300px !important;
+  }

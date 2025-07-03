@@ -1,3 +1,7 @@
+:root {
+  --twitter-color: #bb2b7a;
+}
+
 .App {
   text-align: center;
 }
@@ -24,10 +28,6 @@
   color: #f9f1cf;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
 @keyframes hinge {
   0% {
     transform: rotate(0);
@@ -47,4 +47,16 @@
     transform: translateY(600px);
     opacity: 0;
   }
+}
+
+.app-body {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  opacity: 0;
+  transition: opacity 0.8s ease-in;
+}
+
+.app-body.fade-in {
+  opacity: 1;
 }

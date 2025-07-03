@@ -1,0 +1,1 @@
+export const SocivaContractAddress = "0xYourContractAddressHere";

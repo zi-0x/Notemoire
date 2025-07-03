@@ -10,6 +10,9 @@ import Box from '@mui/material/Box';
 import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import Avatar from 'react-avatar';
+
+<Avatar name="Sociva User" size="100" round={true} />
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -19,6 +22,7 @@ function App() {
   const colorMode = React.useContext(ColorModeContext);
   const [currentAccount, setCurrentAccount] = useState('');
   const [correctNetwork, setCorrectNetwork] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
 
     // Calls Metamask to connect wallet on clicking Connect Wallet button
   const connectWallet = async () => {
@@ -69,16 +73,41 @@ function App() {
     checkCorrectNetwork();
   });
 
+  // Automatically hide welcome screen after 3 seconds
+  useEffect(() => {
+    if (showWelcome) {
+      const timer = setTimeout(() => setShowWelcome(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcome]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <div>
-         <h1>Welcome to Sociva!</h1>
-         <p>Your space to Siv your thoughts, freely and securely.</p>
-       </div>
-        
-      </header>
+      {showWelcome ? (
+        // Welcome Screen
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <div>
+            <h1>Welcome to Sociva!</h1>
+            <p>Your space to Siv your thoughts, freely and securely.</p>
+            {currentAccount && correctNetwork ? null : (
+              <div>
+                <p>Please connect your wallet to continue</p>
+                <button className="connect-wallet-button" onClick={connectWallet}>
+                  Connect Wallet
+                </button>
+              </div>
+            )}
+          </div>
+        </header>
+      ) : (
+        // Main App with Feed
+        <div className="app-body fade-in">
+          <Sidebar />
+          <Feed />
+          <Widgets />
+        </div>
+      )}
     </div>
   );
 }
