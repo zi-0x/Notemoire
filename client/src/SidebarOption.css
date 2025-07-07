@@ -1,27 +1,118 @@
 .sidebarOption {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  margin-bottom: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebarOption:hover {
+  background-color: var(--background-secondary);
+  color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.sidebarOption:hover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+  border-radius: 0 2px 2px 0;
+}
+
+.sidebarOption > .MuiSvgIcon-root {
+  padding: 8px;
+  margin-right: 16px;
+  font-size: 34px !important;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.sidebarOption:hover > .MuiSvgIcon-root {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.sidebarOption > h2 {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0;
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+.sidebarOption:hover > h2 {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.sidebarOption--active {
+  background-color: var(--background-secondary);
+  color: var(--primary-color);
+}
+
+.sidebarOption--active > .MuiSvgIcon-root {
+  color: var(--primary-color);
+}
+
+.sidebarOption--active > h2 {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.sidebarOption--active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+  border-radius: 0 2px 2px 0;
+}
+
+.sidebarOption--nested {
+  margin-left: 24px;
+  padding: 8px 16px;
+  font-size: 0.9em;
+}
+
+.sidebarOption--nested > h2 {
+  font-size: 16px;
+  font-weight: 500;
+
+}
+
+.sidebarOption--nested > .MuiSvgIcon-root {
+  font-size: 20px !important;
+  padding: 6px;
+}
+
+.sidebarOption__badge {
+  margin-right: 16px;
+  font-size: 34px;
+}
+
+.sidebarOption__badge > .MuiSvgIcon-root {
+  padding: 8px;
+  font-size: 34px !important;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.sidebarOption:hover .sidebarOption__badge > .MuiSvgIcon-root {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.sidebarOption--active .sidebarOption__badge > .MuiSvgIcon-root {
+  color: var(--primary-color);
   
-  .sidebarOption:hover {
-    background-color: #fffdeb;
-    border-radius: 30px;
-    color: var(--twitter-color);
-    transition: color 100ms ease-out;
-  }
-  
-  .sidebarOption > .MuiSvgIcon-root {
-    padding: 20px;
-    
-  }
-  
-  .sidebarOption > h2 {
-    font-weight: 800;
-    font-size: 20px;
-    margin-right: 20px;
-  }
-  
-  .sidebarOption--active {
-    color: var(--twitter-color);
-  }
+}

@@ -1,1 +1,1 @@
-export const SocivaContractAddress = "0xYourContractAddressHere";
+export const SocivaContractAddress = "0xd7Dc5B20E59259385497328Ea614c743c3787040";

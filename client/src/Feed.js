@@ -16,10 +16,28 @@ const getUpdatedSivs = (allSivs, address) => {
     let updatedSivs = [];
     // Here we set a personal flag around the sivs
     for(let i=0; i<allSivs.length; i++) {
+      let sivData;
+      
+      // Check if this is a poll
+      try {
+        const parsed = JSON.parse(allSivs[i].sivText);
+        if (parsed.type === 'poll') {
+          // Add poll ID if not present
+          if (!parsed.id) {
+            parsed.id = `poll_${allSivs[i].id}_${Date.now()}`;
+          }
+          sivData = JSON.stringify(parsed);
+        } else {
+          sivData = allSivs[i].sivText;
+        }
+      } catch (e) {
+        sivData = allSivs[i].sivText;
+      }
+
       if(allSivs[i].username.toLowerCase() === address.toLowerCase()) {
         let siv = {
           'id': allSivs[i].id,
-          'sivText': allSivs[i].sivText,
+          'sivText': sivData,
           'isDeleted': allSivs[i].isDeleted,
           'username': allSivs[i].username,
           'personal': true
@@ -27,7 +45,7 @@ const getUpdatedSivs = (allSivs, address) => {
         updatedSivs.push(siv);
       } else {
           let siv = {
-          'sivText': allSivs[i].sivText,
+          'sivText': sivData,
           'id': allSivs[i].id,
           'isDeleted': allSivs[i].isDeleted,
           'username': allSivs[i].username,
@@ -96,18 +114,21 @@ const getUpdatedSivs = (allSivs, address) => {
       </div>
 
       <SivBox />
-      <FlipMove>
-        {posts.map((post) => (
-          <Post 
-          key={post.id}
-          post={post} 
-          displayName={post.username}
-          text={post.sivText}
-          personal={post.personal}
-          onClick={deleteSiv(post.id)}
-           />
-        ))}
-      </FlipMove>
+      <div className="feed__content">
+        <FlipMove>
+          {posts.map((post) => (
+            <div key={post.id} className="feed__post">
+              <Post 
+                post={post} 
+                displayName={post.username}
+                text={post.sivText}
+                personal={post.personal}
+                onClick={deleteSiv(post.id)}
+              />
+            </div>
+          ))}
+        </FlipMove>
+      </div>
     </div>
   );
 

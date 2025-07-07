@@ -10,6 +10,33 @@ import { BrowserProvider, Contract } from "ethers";
 function SivBox() {
   const [sivMessage, setSivMessage] = useState("");
   const [avatarName, setAvatarName] = useState("");
+  const [showPollForm, setShowPollForm] = useState(false);
+  const [pollQuestion, setPollQuestion] = useState("");
+  const [pollOptions, setPollOptions] = useState(["", ""]);
+  const [isComposing, setIsComposing] = useState(false);
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Ctrl/Cmd + Enter to submit
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        if (showPollForm) {
+          handlePollSubmit();
+        } else if (sivMessage.trim()) {
+          handleSivSubmit();
+        }
+      }
+      // Escape to close poll form
+      if (event.key === 'Escape' && showPollForm) {
+        setShowPollForm(false);
+        setPollQuestion("");
+        setPollOptions(["", ""]);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [sivMessage, showPollForm, pollQuestion, pollOptions]);
 
   const addSiv = async () => {
     let siv = {
@@ -32,6 +59,70 @@ function SivBox() {
     }
   };
 
+  const handleSivSubmit = async () => {
+    if (!sivMessage.trim()) return;
+    
+    setIsComposing(true);
+    try {
+      await addSiv();
+      setSivMessage("");
+      alert("✅ Siv posted successfully!");
+    } catch (error) {
+      alert("❌ Error posting Siv. Please try again.");
+    } finally {
+      setIsComposing(false);
+    }
+  };
+
+  const addPoll = async () => {
+    // Create a poll object with question and options
+    const pollData = {
+      type: 'poll',
+      id: `poll_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      question: pollQuestion,
+      options: pollOptions.filter(option => option.trim() !== ''),
+      votes: {},
+      sivText: `Poll: ${pollQuestion}`,
+      isDeleted: false,
+    };
+
+    try {
+      const provider = new BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const socivaContract = new Contract(
+        SocivaContractAddress,
+        Sociva.abi,
+        signer
+      );
+      // Store poll data as JSON string in sivText
+      let pollTx = await socivaContract.addSiv(JSON.stringify(pollData), false);
+      console.log('Poll created:', pollTx);
+    } catch (error) {
+      console.log("Error submitting new Poll:", error);
+    }
+  };
+
+  const handlePollSubmit = async () => {
+    if (!pollQuestion.trim() || pollOptions.filter(opt => opt.trim()).length < 2) {
+      alert("Please enter a question and at least 2 options for your poll.");
+      return;
+    }
+    
+    setIsComposing(true);
+    try {
+      await addPoll();
+      // Reset form
+      setShowPollForm(false);
+      setPollQuestion("");
+      setPollOptions(["", ""]);
+      alert("✅ Poll created successfully!");
+    } catch (error) {
+      alert("❌ Error creating poll. Please try again.");
+    } finally {
+      setIsComposing(false);
+    }
+  };
+
   const sendSiv = async (e) => {
     e.preventDefault();
     try {
@@ -42,9 +133,37 @@ function SivBox() {
     }
   };
 
-  const vote = async (e) => {
+  const sendPoll = async (e) => {
     e.preventDefault();
-    window.location.href = "https://votingfeature.vercel.app/";
+    try {
+      await addPoll();
+      setPollQuestion("");
+      setPollOptions(["", ""]);
+      setShowPollForm(false);
+    } catch (error) {
+      console.error("Error sending poll:", error);
+    }
+  };
+
+  const togglePollForm = () => {
+    setShowPollForm(!showPollForm);
+  };
+
+  const addPollOption = () => {
+    setPollOptions([...pollOptions, ""]);
+  };
+
+  const updatePollOption = (index, value) => {
+    const newOptions = [...pollOptions];
+    newOptions[index] = value;
+    setPollOptions(newOptions);
+  };
+
+  const removePollOption = (index) => {
+    if (pollOptions.length > 2) {
+      const newOptions = pollOptions.filter((_, i) => i !== index);
+      setPollOptions(newOptions);
+    }
   };
 
   useEffect(() => {
@@ -56,7 +175,7 @@ function SivBox() {
     <div className="sivBox">
       <form>
         <div className="sivBox__input">
-          <Avatar name={avatarName} size="100" round={true} />
+          <Avatar name={avatarName} size="50" round={true} color="#bb2b7a" fgColor="#ffffff" />
           <input
             onChange={(e) => setSivMessage(e.target.value)}
             value={sivMessage}
@@ -65,20 +184,85 @@ function SivBox() {
             style={{ borderRadius: '50px' }}
           />
         </div>
-        <Button
-          onClick={sendSiv}
-          type="submit"
-          className="sivBox__sivButton"
-        >
-          Siv
-        </Button>
-        <Button
-          onClick={vote}
-          type="submit"
-          className="sivBox__addVote"
-        >
-          Add Poll
-        </Button>
+        
+        {!showPollForm ? (
+          <div className="sivBox__buttons">
+            <Button
+              onClick={handleSivSubmit}
+              type="button"
+              disabled={!sivMessage.trim() || isComposing}
+              className="sivBox__sivButton"
+            >
+              {isComposing ? "Posting..." : "Siv"}
+            </Button>
+            <Button
+              onClick={togglePollForm}
+              type="button"
+              className="sivBox__addPoll"
+            >
+              Add Poll
+            </Button>
+          </div>
+        ) : (
+          <div className="sivBox__pollForm">
+            <input
+              value={pollQuestion}
+              onChange={(e) => setPollQuestion(e.target.value)}
+              placeholder="Ask a question..."
+              className="sivBox__pollQuestion"
+            />
+            
+            {pollOptions.map((option, index) => (
+              <div key={index} className="sivBox__pollOption">
+                <input
+                  value={option}
+                  onChange={(e) => updatePollOption(index, e.target.value)}
+                  placeholder={`Option ${index + 1}`}
+                  className="sivBox__pollOptionInput"
+                />
+                {pollOptions.length > 2 && (
+                  <Button
+                    onClick={() => removePollOption(index)}
+                    className="sivBox__removeOption"
+                    size="small"
+                  >
+                    ×
+                  </Button>
+                )}
+              </div>
+            ))}
+            
+            <div className="sivBox__pollActions">
+              <Button
+                onClick={addPollOption}
+                className="sivBox__addOption"
+                size="small"
+              >
+                Add Option
+              </Button>
+              
+              <div className="sivBox__pollButtons">
+                <Button
+                  onClick={() => {
+                    setShowPollForm(false);
+                    setPollQuestion("");
+                    setPollOptions(["", ""]);
+                  }}
+                  className="sivBox__cancelPoll"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handlePollSubmit}
+                  disabled={!pollQuestion.trim() || pollOptions.filter(opt => opt.trim()).length < 2 || isComposing}
+                  className="sivBox__submitPoll"
+                >
+                  {isComposing ? "Creating..." : "Create Poll"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );

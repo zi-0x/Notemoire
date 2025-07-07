@@ -1,9 +1,45 @@
 :root {
-  --twitter-color: #bb2b7a;
+  --primary-color: #bb2b7a;
+  --primary-hover: #a02566;
+  --secondary-color: #bb2b7a;
+  --accent-color: #f48fb1;
+  --text-primary: #720c49;
+  --text-secondary: #657786;
+  --background-primary: #ffffff;
+  --background-secondary: #f7f9fa;
+  --background-tertiary: #e1e8ed;
+  --border-color: #e1e8ed;
+  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-heavy: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --border-radius: 16px;
+  --border-radius-small: 8px;
+  --transition: all 0.2s ease-in-out;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  line-height: 1.6;
 }
 
 .App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.welcome-message {
   text-align: center;
+  margin-top: 20px;
+  color: #f9f1cf;
 }
 
 .App-logo {
@@ -13,50 +49,60 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation:hinge 2s ease-in-out forwards;
+    animation: gentleBounce 3s ease-in-out infinite;
+  }
+}
+
+@keyframes gentleBounce {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 
 .App-header {
-  background-color: #bb2b7a;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(25px + 2vmin);
-  color: #f9f1cf;
-}
-
-@keyframes hinge {
-  0% {
-    transform: rotate(0);
-    transform-origin: top left;
-    opacity: 1;
-  }
-  45% {
-    transform: rotate(0);
-    transform-origin: top left;
-    opacity: 1;
-  }
-  80% {
-    transform: rotate(35deg);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(600px);
-    opacity: 0;
-  }
+  font-size: calc(20px + 2vmin);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .app-body {
   display: flex;
   width: 100%;
   min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
   opacity: 0;
   transition: opacity 0.8s ease-in;
+  padding: 0 20px;
 }
 
 .app-body.fade-in {
   opacity: 1;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }

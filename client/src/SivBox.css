@@ -1,33 +1,333 @@
 .sivBox {
-    padding-bottom: 10px;
-    border-bottom: 8px solid  #d477aa;
-;
-    padding-right: 10px;
+  padding: 20px;
+  border-bottom: 8px solid var(--background-secondary);
+  background-color: var(--background-primary);
+  position: sticky;
+  top: 60px;
+  z-index: 90;
+  backdrop-filter: blur(12px);
+}
+
+.sivBox > form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sivBox__input {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.sivBox__input > input {
+  flex: 1;
+  font-size: 20px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  padding: 12px;
+  resize: none;
+  min-height: 50px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.sivBox__input > input::placeholder {
+  color: var(--text-secondary);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.sivBox__input > input:focus {
+  background-color: var(--background-secondary);
+  border-radius: var(--border-radius);
+}
+
+.sivBox__imageInput {
+  border: none;
+  padding: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--border-radius-small);
+  transition: var(--transition);
+}
+
+.sivBox__imageInput:hover {
+  background-color: var(--background-secondary);
+  color: var(--primary-color);
+}
+
+.sivBox__buttons {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px 16px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.sivBox__sivButton {
+  background: #f18bc4 !important;
+  color: white !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  border-radius: 50px !important;
+  padding: 12px 24px !important;
+  min-width: 80px !important;
+  font-size: 15px !important;
+  box-shadow: var(--shadow-medium) !important;
+  transition: var(--transition) !important;
+}
+
+.sivBox__sivButton:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-heavy) !important;
+}
+
+.sivBox__sivButton:disabled {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.sivBox__addPoll {
+  background-color: transparent !important;
+  border: 2px solid var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 50px !important;
+  padding: 10px 20px !important;
+  transition: var(--transition) !important;
+}
+
+.sivBox__addPoll:hover {
+  background-color: #7ce16f !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+}
+
+.sivBox__pollForm {
+  padding: 20px;
+  border: 2px solid var(--border-color);
+  background: linear-gradient(135deg, var(--background-secondary), var(--background-primary));
+  border-radius: var(--border-radius);
+  margin-top: 16px;
+  box-shadow: var(--shadow-light);
+}
+
+.sivBox__pollQuestion {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  outline: none;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.sivBox__pollQuestion:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(187, 43, 122, 0.1);
+}
+
+.sivBox__pollQuestion::placeholder {
+  color: var(--text-secondary);
+}
+
+.sivBox__pollOption {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.sivBox__pollOptionInput {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 25px;
+  font-size: 14px;
+  outline: none;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.sivBox__pollOptionInput:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(187, 43, 122, 0.1);
+}
+
+.sivBox__pollOptionInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.sivBox__removeOption {
+  background-color: #4caf50 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  min-width: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  transition: var(--transition) !important;
+}
+
+.sivBox__removeOption:hover {
+  background-color: #4caf50 !important;
+  transform: scale(1.1) !important;
+}
+
+.sivBox__pollActions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.sivBox__addOption {
+  background: linear-gradient(135deg, #4caf50, #45a049) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 8px 20px !important;
+  margin-bottom: 16px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  transition: var(--transition) !important;
+}
+
+.sivBox__addOption:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-medium) !important;
+}
+
+.sivBox__pollButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.sivBox__cancelPoll {
+  background-color: var(--background-tertiary) !important;
+  color: var(--text-secondary) !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 10px 20px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  transition: var(--transition) !important;
+}
+
+.sivBox__cancelPoll:hover {
+  background-color: var(--text-secondary) !important;
+  color: white !important;
+}
+
+.sivBox__submitPoll {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 10px 24px !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
+  transition: var(--transition) !important;
+}
+
+.sivBox__submitPoll:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-medium) !important;
+}
+
+.sivBox__submitPoll:disabled {
+  background: var(--background-tertiary) !important;
+  color: var(--text-secondary) !important;
+  transform: none !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Character counter */
+.sivBox__charCounter {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-right: auto;
+}
+
+.sivBox__charCounter.warning {
+  color: #7be854;
+}
+
+.sivBox__charCounter.error {
+  color: #4caf50;
+}
+
+/* Animation for poll form */
+.sivBox__pollForm {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
   }
-  
-  .sivBox > form {
-    display: flex;
-    flex-direction: column;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
   }
-  
-  .sivBox__input {
-    padding: 20px;
-    display: flex;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sivBox {
+    padding: 16px;
   }
   
   .sivBox__input > input {
-    flex: 1;
-    margin-left: 20px;
-    font-size: 20px;
-    border: none;
+    font-size: 18px;
   }
   
-  .sivBox__imageInput {
-    border: none;
-    padding: 10px;
+  .sivBox__input > input::placeholder {
+    font-size: 18px;
   }
   
-  .sivBox__tweetButton {
+  .sivBox__buttons {
+    padding: 0 0 16px 0;
+  }
+  
+  .sivBox__sivButton {
+    min-width: 70px !important;
+    font-size: 14px !important;
+    padding: 10px 20px !important;
+  }
+}
+
+  .sivBox__buttons {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    justify-content: flex-end;
+  }
+
+  .sivBox__sivButton {
     background-color: #bb2b7a !important;
     border: none !important;
     color: white !important;
@@ -36,8 +336,108 @@
     border-radius: 30px !important;
     width: 80px;
     height: 40px !important;
-    margin-top: 20px !important;
-    margin-left: auto !important;
+  }
+
+  .sivBox__addPoll {
+    background-color: #4caf50 !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600 !important;
+    text-transform: inherit !important;
+    border-radius: 30px !important;
+    width: 100px;
+    height: 40px !important;
+  }
+
+  .sivBox__pollForm {
+    padding: 20px;
+    border-top: 1px solid #e1e8ed;
+    background-color: #f8f9fa;
+    border-radius: 0 0 15px 15px;
+  }
+
+  .sivBox__pollQuestion {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 2px solid #e1e8ed;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+  }
+
+  .sivBox__pollQuestion:focus {
+    border-color: #f086c1;
+  }
+
+  .sivBox__pollOption {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+
+  .sivBox__pollOptionInput {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #e1e8ed;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .sivBox__pollOptionInput:focus {
+    border-color: #bb2b7a;
+  }
+
+  .sivBox__removeOption {
+    background-color: #4caf50 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    min-width: 30px !important;
+    width: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+  }
+
+  .sivBox__pollActions {
+    margin-top: 15px;
+  }
+
+  .sivBox__addOption {
+    background-color: #4caf50 !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 6px 16px !important;
+    margin-bottom: 15px !important;
+    text-transform: none !important;
+  }
+
+  .sivBox__pollButtons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .sivBox__cancelPoll {
+    background-color: #757575 !important;
+    color: white !important;
+    border-radius: 25px !important;
+    padding: 8px 20px !important;
+    text-transform: none !important;
+  }
+
+  .sivBox__submitPoll {
+    background-color: #bb2b7a !important;
+    color: white !important;
+    border-radius: 25px !important;
+    padding: 8px 20px !important;
+    text-transform: none !important;
+  }
+
+  .sivBox__submitPoll:disabled {
+    background-color: #ccd6dd !important;
+    color: #657786 !important;
   }
 
   .sivBox__addVote{

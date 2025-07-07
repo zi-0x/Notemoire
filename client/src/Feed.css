@@ -1,0 +1,116 @@
+.feed {
+  flex: 0.5;
+  background-color: var(--background-primary);
+  border-right: 1px solid var(--border-color);
+  min-height: 100vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.feed_header {
+  background-color: var(--background-primary);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 20px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.feed_header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.feed_header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+}
+
+.feed__content {
+  padding-bottom: 80px;
+}
+
+.feed__post {
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition);
+  position: relative;
+}
+
+.feed__post:hover {
+  background-color: rgba(0, 0, 0, 0.01);
+}
+
+.feed__post:last-child {
+  border-bottom: none;
+}
+
+/* Loading states */
+.feed__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.feed__empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.feed__empty h3 {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.feed__empty p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Scroll indicator */
+.feed::-webkit-scrollbar {
+  width: 6px;
+}
+
+.feed::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+.feed::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.feed::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .feed {
+    flex: 1;
+  }
+  
+  .feed_header {
+    padding: 16px 20px;
+  }
+  
+  .feed_header h2 {
+    font-size: 18px;
+  }
+}

@@ -2,6 +2,7 @@ import logo from './soclogo.jpeg';
 import Sidebar from "./Sidebar";
 import Feed from "./Feed";
 import Widgets from "./Widgets";
+import Profile from "./Profile";
 import "./App.css";
 import { useState, useEffect } from "react";
 import * as React from 'react';
@@ -23,6 +24,7 @@ function App() {
   const [currentAccount, setCurrentAccount] = useState('');
   const [correctNetwork, setCorrectNetwork] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [currentView, setCurrentView] = useState('home'); // 'home' or 'profile'
 
     // Calls Metamask to connect wallet on clicking Connect Wallet button
   const connectWallet = async () => {
@@ -81,13 +83,33 @@ function App() {
     }
   }, [showWelcome]);
 
+  // Handle navigation between views
+  const handleNavigation = (view) => {
+    setCurrentView(view);
+  };
+
+  const handleBackToHome = () => {
+    setCurrentView('home');
+  };
+
+  // Render main content based on current view
+  const renderMainContent = () => {
+    switch(currentView) {
+      case 'profile':
+        return <Profile onBack={handleBackToHome} userAddress={currentAccount} />;
+      case 'home':
+      default:
+        return <Feed />;
+    }
+  };
+
   return (
     <div className="App">
       {showWelcome ? (
         // Welcome Screen
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <div>
+          <div className="welcome-message">
             <h1>Welcome to Sociva!</h1>
             <p>Your space to Siv your thoughts, freely and securely.</p>
             {currentAccount && correctNetwork ? null : (
@@ -103,8 +125,8 @@ function App() {
       ) : (
         // Main App with Feed
         <div className="app-body fade-in">
-          <Sidebar />
-          <Feed />
+          <Sidebar onNavigate={handleNavigation} currentView={currentView} />
+          {renderMainContent()}
           <Widgets />
         </div>
       )}
