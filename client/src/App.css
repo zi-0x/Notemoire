@@ -1,17 +1,17 @@
 :root {
-  --primary-color: #bb2b7a;
-  --primary-hover: #a02566;
-  --secondary-color: #bb2b7a;
-  --accent-color: #f48fb1;
-  --text-primary: #720c49;
-  --text-secondary: #657786;
-  --background-primary: #ffffff;
-  --background-secondary: #f7f9fa;
-  --background-tertiary: #e1e8ed;
-  --border-color: #e1e8ed;
-  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-heavy: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --primary-color: #8f3bbf;           /* Vibrant Violet */
+  --primary-hover: #5a217a;           /* Deep Violet */
+  --secondary-color: #e09ec3;         /* Soft Pinkish Lavender */
+  --accent-color: #d16ba5;            /* Magical Pink-Purple */
+  --text-primary: #fbeaff;            /* Pale Pinkish Violet */
+  --text-secondary: #e0b3e6;          /* Muted Pink Lavender */
+  --background-primary: #1a0826;      /* Very Dark Purple */
+  --background-secondary: #24113a;    /* Deep Violet Black */
+  --background-tertiary: #3d235a;     /* Tertiary Purple */
+  --border-color: #d16ba5;            /* Pinkish Accent */
+  --shadow-light: 0 1px 3px rgba(209, 107, 165, 0.15);
+  --shadow-medium: 0 4px 6px rgba(209, 107, 165, 0.18);
+  --shadow-heavy: 0 8px 25px rgba(209, 107, 165, 0.25);
   --border-radius: 16px;
   --border-radius-small: 8px;
   --transition: all 0.2s ease-in-out;
@@ -39,11 +39,15 @@ body {
 .welcome-message {
   text-align: center;
   margin-top: 20px;
-  color: #f9f1cf;
+  color: var(--text-primary);
 }
 
 .App-logo {
-  height: 50vmin;
+  width: 80vw;
+  max-width: 800px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
   pointer-events: none;
 }
 
@@ -63,15 +67,12 @@ body {
 }
 
 .App-header {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(135deg, #430940 0%, #3b0831 60%, #2a103b 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(20px + 2vmin);
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  align-items: center;
 }
 
 .app-body {

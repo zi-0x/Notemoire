@@ -1,4 +1,4 @@
-import logo from './soclogo.jpeg';
+import logo from './Notemoire_logo.png';
 import Sidebar from "./Sidebar";
 import Feed from "./Feed";
 import Widgets from "./Widgets";
@@ -110,8 +110,8 @@ function App() {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <div className="welcome-message">
-            <h1>Welcome to Sociva!</h1>
-            <p>Your space to Siv your thoughts, freely and securely.</p>
+            
+            <h1>Just Flick and Click to access your Grimoire</h1>
             {currentAccount && correctNetwork ? null : (
               <div>
                 <p>Please connect your wallet to continue</p>

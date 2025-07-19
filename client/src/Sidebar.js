@@ -17,7 +17,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import Button from "@mui/material/Button";
 import Badge from "@mui/material/Badge";
 import Collapse from "@mui/material/Collapse";
-import logo from "./sclogo.png";
+import logo from "./Notemoire_logo.png";
 
 function Sidebar({ onNavigate, currentView }){
   const [activeItem, setActiveItem] = useState("Home");

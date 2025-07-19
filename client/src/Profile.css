@@ -9,7 +9,7 @@
 .profile__header {
   position: sticky;
   top: 0;
-  background-color: rgba(255, 255, 255, 0.95);
+  background: var(--background-secondary); /* changed from gradient to themed secondary bg */
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-color);
   z-index: 100;

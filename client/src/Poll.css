@@ -152,8 +152,8 @@
 }
 
 .poll__voteButton {
-  background: #4caf50 !important;
-  color: white !important;
+  background: #b95a8e !important;
+  color: rgb(255, 255, 255) !important;
   border: none !important;
   border-radius: 50px !important;
   padding: 12px 32px !important;

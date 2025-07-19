@@ -3,9 +3,9 @@
   "name": "Socially Owned Communication & Innovation Value App",
   "icons": [
     {
-      "src": "logo.jpeg",
+      "src": "Notemoire_favicon.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png"
     },
     {
       "src": "logo.png",

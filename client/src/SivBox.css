@@ -107,7 +107,7 @@
 }
 
 .sivBox__addPoll:hover {
-  background-color: #7ce16f !important;
+  background-color: #d46fe1 !important;
   color: white !important;
   transform: translateY(-1px) !important;
 }
@@ -174,7 +174,7 @@
 }
 
 .sivBox__removeOption {
-  background-color: #4caf50 !important;
+  background-color: var(--primary-color) !important;
   color: white !important;
   border: none !important;
   border-radius: 50% !important;
@@ -189,7 +189,7 @@
 }
 
 .sivBox__removeOption:hover {
-  background-color: #4caf50 !important;
+  background-color: var(--accent-color) !important;
   transform: scale(1.1) !important;
 }
 
@@ -200,8 +200,8 @@
 }
 
 .sivBox__addOption {
-  background: linear-gradient(135deg, #4caf50, #45a049) !important;
-  color: white !important;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+  color: var(--text-primary) !important;
   border: none !important;
   border-radius: 25px !important;
   padding: 8px 20px !important;
@@ -214,6 +214,7 @@
 .sivBox__addOption:hover {
   transform: translateY(-1px) !important;
   box-shadow: var(--shadow-medium) !important;
+  background: linear-gradient(135deg, var(--accent-color), var(--primary-hover)) !important;
 }
 
 .sivBox__pollButtons {
@@ -223,7 +224,7 @@
 }
 
 .sivBox__cancelPoll {
-  background-color: var(--background-tertiary) !important;
+  background-color: rgb(233, 160, 241) !important;
   color: var(--text-secondary) !important;
   border: none !important;
   border-radius: 25px !important;
@@ -235,12 +236,12 @@
 
 .sivBox__cancelPoll:hover {
   background-color: var(--text-secondary) !important;
-  color: white !important;
+  color: var(--background-primary) !important;
 }
 
 .sivBox__submitPoll {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
-  color: white !important;
+  color: var(--text-primary) !important;
   border: none !important;
   border-radius: 25px !important;
   padding: 10px 24px !important;
@@ -252,6 +253,7 @@
 .sivBox__submitPoll:hover:not(:disabled) {
   transform: translateY(-1px) !important;
   box-shadow: var(--shadow-medium) !important;
+  background: linear-gradient(135deg, var(--accent-color), var(--primary-hover)) !important;
 }
 
 .sivBox__submitPoll:disabled {
@@ -270,11 +272,11 @@
 }
 
 .sivBox__charCounter.warning {
-  color: #7be854;
+  color: #e10e0e;
 }
 
 .sivBox__charCounter.error {
-  color: #4caf50;
+  color: #e10e0e;
 }
 
 /* Animation for poll form */
@@ -339,7 +341,7 @@
   }
 
   .sivBox__addPoll {
-    background-color: #4caf50 !important;
+    background-color: #bb2b7a !important;
     border: none !important;
     color: white !important;
     font-weight: 600 !important;
@@ -391,7 +393,7 @@
   }
 
   .sivBox__removeOption {
-    background-color: #4caf50 !important;
+    background-color: #e016b1 !important;
     color: white !important;
     border-radius: 50% !important;
     min-width: 30px !important;
@@ -405,7 +407,7 @@
   }
 
   .sivBox__addOption {
-    background-color: #4caf50 !important;
+    background-color: #bb2b7a !important;
     color: white !important;
     border-radius: 20px !important;
     padding: 6px 16px !important;
