@@ -21,28 +21,28 @@ import NoteState from './Contexts/Notes/NoteState';
 
 export default function App() {
   const [alert, setAlert] = useState(null);
-  
-  
+
+
   // Function to display alert messages
   const showAlert = (message, type) => {
-      setAlert({
-          msg: message,
-          type: type
-        });
-        setTimeout(() => setAlert(null), 2000);
-    };
-    
-    // Check if user is logged in (token exists in localStorage)
-    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
-    
-    return (
+    setAlert({
+      msg: message,
+      type: type
+    });
+    setTimeout(() => setAlert(null), 2000);
+  };
+
+  // Check if user is logged in (token exists in localStorage)
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+
+  return (
     // Wrapping the whole app in NoteState so that context is available to all components
     <NoteState showAlert={showAlert}>
       <Router>
-        
+
 
         {/* Show Navbar and Alert only if user is authenticated */}
-{isAuthenticated && <Navbar setIsAuthenticated={setIsAuthenticated} />}
+        {isAuthenticated && <Navbar setIsAuthenticated={setIsAuthenticated} />}
         {isAuthenticated && <Alert alert={alert} />}
 
         <Routes>
@@ -71,6 +71,7 @@ export default function App() {
             }
           />
 
+
           {/* About route is protected – if not logged in, redirect to / */}
           <Route
             path="/about"
@@ -92,7 +93,7 @@ export default function App() {
           />
           <Route
             path="/signup"
-            element={<div className='container'><Signup showAlert={showAlert} setIsAuthenticated={setIsAuthenticated}/></div>}
+            element={<div className='container'><Signup showAlert={showAlert} setIsAuthenticated={setIsAuthenticated} /></div>}
           />
         </Routes>
       </Router>

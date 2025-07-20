@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -19,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "both" : "concurrently \"npm run start\" \"nodemon inotebook-backend/index.js\""
+    "both": "concurrently \"npm run start\" \"nodemon inotebook-backend/index.js\""
   },
   "eslintConfig": {
     "extends": [

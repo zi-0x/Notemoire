@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Notes = (props) => {
     const context = useContext(noteContext);
-    const { showAlert } = props
-    const { notes, addnote, getNotes, editnote } = context;
+    const { notes, getNotes, editnote } = context;
 
     const navigate = useNavigate();
 
@@ -157,8 +156,7 @@ const Notes = (props) => {
                     <div className="col-md-4" key={note._id}>
                         <NoteItem updateNote={updateNote} note={note} showAlert={props.showAlert} />
                         {props.showAI && (
-                            <NoteAIActions noteId={note._id} noteContent={note.description} />
-                        )}
+                            <NoteAIActions noteId={note._id} noteContent={note.description} note={note} />)}
                     </div>
                 ))}
             </div>

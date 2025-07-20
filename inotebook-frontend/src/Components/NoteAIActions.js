@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import noteContext from '../Contexts/Notes/Notecontext';
+import { generateAIContent, listAvailableModels } from '../Utils/gemini';
 
 export default function NoteAIActions({ noteId, noteContent, note }) {
   const { editnote } = useContext(noteContext);
@@ -8,39 +9,45 @@ export default function NoteAIActions({ noteId, noteContent, note }) {
   const [modalContent, setModalContent] = useState('');
   const [showModal, setShowModal] = useState(false);
 
-  const handleGenerate = async (type) => {
+  const handleGenerate = async (type, forceRegenerate = false) => {
     setModalType(type);
     setShowModal(true);
 
-    // ✅ If already present in note, show it
-    if (note && note[type]) {
+    // Skip API call if data already exists unless user forces regeneration
+    if (!forceRegenerate && note?.[type]?.trim()) {
       setModalContent(note[type]);
       return;
     }
 
-    // ✅ Otherwise, fake generate and save
-    let generated = "";
-    if (type === 'summary') {
-      generated = "📝 Summary of the note: \n• Point 1\n• Point 2";
-    } else if (type === 'flashcards') {
-      generated = "📇 Q: What is JavaScript?\nA: A scripting language.";
-    } else if (type === 'quiz') {
-      generated = "❓ Q1: What is React?\nA. Library\nB. Language\nC. Framework\nD. Compiler";
+    if (!noteContent?.trim()) {
+      setModalContent("Content is empty. Cannot generate.");
+      return;
     }
 
-    // Show it immediately
-    setModalContent(generated);
+    const promptMap = {
+      summary: `Summarize the following note:\n\n${noteContent}`,
+      flashcards: `Create flashcards (question and answer) based on this content:\n\n${noteContent}`
+    };
 
-    // ✅ Save to DB using editnote with only that one field
-    await editnote(noteId, null, null, null, { [type]: generated });
+    setModalContent("Generating...");
+
+    try {
+      const generated = await generateAIContent(promptMap[type]);
+      setModalContent(generated);
+      await editnote(noteId, null, null, null, { [type]: generated });
+    } catch (err) {
+      setModalContent("Failed to generate content.");
+      console.error("Gemini error:", err);
+    }
   };
+
+
 
   return (
     <>
       <div className="d-flex flex-wrap gap-2 mt-2">
-        <button className="btn btn-outline-primary btn-sm" onClick={() => handleGenerate('summary')}>🧠 Summary</button>
-        <button className="btn btn-outline-success btn-sm" onClick={() => handleGenerate('flashcards')}>📇 Revision Cards</button>
-        <button className="btn btn-outline-warning btn-sm" onClick={() => handleGenerate('quiz')}>❓ Quiz</button>
+        <button className="btn btn-outline-primary btn-sm" onClick={() => handleGenerate('summary')}>Summary</button>
+        <button className="btn btn-outline-success btn-sm" onClick={() => handleGenerate('flashcards')}>Revision Cards</button>
       </div>
 
       {showModal && (
@@ -54,7 +61,8 @@ export default function NoteAIActions({ noteId, noteContent, note }) {
               <pre style={styles.content}>{modalContent}</pre>
             </div>
             <div style={styles.footer}>
-              <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
+              <button className="btn btn-secondary me-2" onClick={() => setShowModal(false)}>Close</button>
+              <button className="btn btn-secondary" onClick={() => handleGenerate(modalType, true)}>Regenerate</button>
             </div>
           </div>
         </div>
