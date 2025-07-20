@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import noteContext from '../Contexts/Notes/Notecontext';
 import NoteItem from './NoteItem';
+import NoteAIActions from './NoteAIActions';
 import { useNavigate } from 'react-router-dom';
 
 const Notes = (props) => {
@@ -18,7 +19,7 @@ const Notes = (props) => {
     useEffect(() => {
         if (localStorage.getItem('token')) {
 
-        localStorage.getItem('token')
+            localStorage.getItem('token')
             getNotes();
             setAuthChecked(true);
         } else {
@@ -155,6 +156,9 @@ const Notes = (props) => {
                 {notes.map((note) => (
                     <div className="col-md-4" key={note._id}>
                         <NoteItem updateNote={updateNote} note={note} showAlert={props.showAlert} />
+                        {props.showAI && (
+                            <NoteAIActions noteId={note._id} noteContent={note.description} />
+                        )}
                     </div>
                 ))}
             </div>

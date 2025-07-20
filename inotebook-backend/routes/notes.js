@@ -49,13 +49,16 @@ router.post('/addnote', fetchUser, [
 
 // Route 3: Updating a note using: PUT "/api/notes/updatenote/:id"
 router.put('/updatenote/:id', fetchUser, async (req, res) => {
-    const { title, description, tag } = req.body;
+const { title, description, tag, summary, flashcards, quiz } = req.body;
 
     // Creating a new note object with only provided fields
     const newNote = {};
     if (title) newNote.title = title;
     if (description) newNote.description = description;
     if (tag) newNote.tag = tag;
+    if (summary !== undefined) newNote.summary = summary;
+    if (flashcards !== undefined) newNote.flashcards = flashcards;
+    if (quiz !== undefined) newNote.quiz = quiz;
 
     try {
         // Find the note to be updated
@@ -79,18 +82,18 @@ router.put('/updatenote/:id', fetchUser, async (req, res) => {
 
 // Route 4: Deleting a  note using: DELETE "/api/notes/deletenote"
 router.delete('/deletenote/:id', fetchUser, async (req, res) => {
-    try{
-    //find note to be deleted 
-    let note = await Notes.findById(req.params.id);
-    if (!note) return res.status(404).send("Not found");
+    try {
+        //find note to be deleted 
+        let note = await Notes.findById(req.params.id);
+        if (!note) return res.status(404).send("Not found");
 
-    // Check if the note belongs to the authenticated user
-    if (note.user.toString() !== req.user.id) {
-        return res.status(401).send("Not allowed");
+        // Check if the note belongs to the authenticated user
+        if (note.user.toString() !== req.user.id) {
+            return res.status(401).send("Not allowed");
+        }
+        note = await Notes.findByIdAndDelete(req.params.id);
+        res.json({ "Success": "Note has been deleted", note: note });
     }
-    note = await Notes.findByIdAndDelete(req.params.id);
-    res.json({"Success": "Note has been deleted", note: note});
-}
 
     catch (error) {
         console.error(error.message);
@@ -102,4 +105,4 @@ router.delete('/deletenote/:id', fetchUser, async (req, res) => {
 
 
 
-    module.exports = router;
+module.exports = router;

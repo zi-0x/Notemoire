@@ -5,9 +5,9 @@ import Addnote from './Addnotes'
 import { useNavigate } from 'react-router-dom';
 
 const Home = (props) => {
-    const navigate = useNavigate();
-  const {showAlert}= props
-    useEffect(() => {
+  const navigate = useNavigate();
+  const { showAlert } = props
+  useEffect(() => {
     if (!localStorage.getItem('token')) {
       showAlert("Login to access home", "warning");
       navigate("/login");
@@ -16,8 +16,8 @@ const Home = (props) => {
   }, []);
   return (
     <>
-    <Addnote showAlert={showAlert}/>
-    <Notes showAlert={showAlert}/>
+      <Addnote showAlert={showAlert} />
+      <Notes showAlert={showAlert} />
     </>
   )
 }

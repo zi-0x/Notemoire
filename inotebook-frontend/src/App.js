@@ -14,6 +14,7 @@ import Alert from './Components/Alert';
 import Login from './Components/Login';
 import Signup from './Components/Signup';
 import LandingPage from './Components/Landingpage';
+import Aienhancement from './Components/Aienhancement';
 import './App.css';
 
 import NoteState from './Contexts/Notes/NoteState';
@@ -52,6 +53,17 @@ export default function App() {
               isAuthenticated ? (
                 <div className='container'>
                   <Home showAlert={showAlert} />
+                </div>
+              ) : (
+                <LandingPage />
+              )
+            }
+          /><Route
+            path="/ai"
+            element={
+              isAuthenticated ? (
+                <div className='container'>
+                  <Aienhancement showAlert={showAlert} />
                 </div>
               ) : (
                 <LandingPage />

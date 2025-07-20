@@ -12,6 +12,9 @@ const NOTESschema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   tag: { type: String, default: "General" },
+  summary: { type: String, default: "" },
+  flashcards: { type: String, default: "" },
+  quiz: { type: String, default: "" },
   date: { type: Date, default: Date.now }
 });
 

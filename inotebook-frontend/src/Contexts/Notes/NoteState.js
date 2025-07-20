@@ -61,30 +61,36 @@ const NoteState = (props) => {
   };
 
   // EDIT A NOTE 
-  const editnote = async (id, title, description, tag) => {
-    // API call 
-    const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": localStorage.getItem('token')
-      },
-      body: JSON.stringify({ title, description, tag })
-    });
-    console.log("Editing the note with id " + id);
-    const newNotes = [...notes];
-    for (let i = 0; i < newNotes.length; i++) {
-      if (newNotes[i]._id === id) {
-        newNotes[i].title = title;
-        newNotes[i].description = description;
-        newNotes[i].tag = tag;
-        break;
-      }
-    }
-    setNotes(newNotes);
-        showAlert("Note edited successfully", "success")
-
+const editnote = async (id, title, description, tag, aiFields = {}) => {
+  // Merge standard fields and optional AI fields
+  const payload = {
+    ...(title !== null && { title }),
+    ...(description !== null && { description }),
+    ...(tag !== null && { tag }),
+    ...aiFields
   };
+
+  // API call to backend
+  const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": localStorage.getItem('token')
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const updatedNote = await response.json();
+
+  // Update in local state
+  const newNotes = notes.map(note =>
+    note._id === id ? updatedNote : note
+  );
+
+  setNotes(newNotes);
+  showAlert("Note edited successfully", "success");
+};
+
 
   return (
     <noteContext.Provider value={{ notes, addnote, deletenote, editnote, getNotes }}>
