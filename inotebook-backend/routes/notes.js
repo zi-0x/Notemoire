@@ -1,57 +1,68 @@
 const express = require('express');
 const router = express.Router();
-const { body, validationResult } = require('express-validator'); // For validating input
-var fetchUser = require('../Middleware/fetchUser');
+const { body, validationResult } = require('express-validator');
+const fetchUser = require('../Middleware/fetchUser');
 const Notes = require('../modules/NOTES');
 
-// Route 1: Get all notes of a user using: GET "/api/notes/fetchallnotes"
+// Route 1: Get all notes of a user (Web2 or Web3)
 router.get('/fetchallnotes', fetchUser, async (req, res) => {
-    // Finds all notes in the database where the 'user' field matches the authenticated user's ID
-    const notes = await Notes.find({ user: req.user.id });
-    res.json(notes);
-});
-
-// Route 2: Adding a new note using: POST "/api/notes/addnote"
-router.post('/addnote', fetchUser, [
-
-    // Validation rules for incoming request:
-    // 'title' must be at least 1 character long
-    body('title', 'Enter a valid title').isLength({ min: 1 }),
-
-    // 'description' must be at least 1 character long
-    body('description', 'Enter a valid description').isLength({ min: 1 })
-
-], async (req, res) => {
     try {
-        const { title, description, tag } = req.body;
-
-        // Checks if validation errors occurred
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            // Returns HTTP 400 if validation fails with details of the errors
-            return res.status(400).json({ errors: errors.array() });
+        let notes;
+        if (req.user && req.user.id) {
+            // Web2: fetch by MongoDB user ID
+            notes = await Notes.find({ user: req.user.id });
+        } else if (req.user && req.user.walletAddress) {
+            // Web3: fetch by wallet address
+            notes = await Notes.find({ walletAddress: req.user.walletAddress.toLowerCase() });
+        } else {
+            return res.status(401).json({ error: "Authentication failed" });
         }
-
-        // Creates a new note with the given data and links it to the authenticated user
-        const note = new Notes({ title, description, tag, user: req.user.id });
-
-        // Saves the note to the database
-        const savedNote = await note.save();
-
-        // Returns the saved note as JSON response
-        res.json(savedNote);
-
+        res.json(notes);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send("Internal error occurred");
+        res.status(500).send("Internal server error");
     }
 });
 
-// Route 3: Updating a note using: PUT "/api/notes/updatenote/:id"
-router.put('/updatenote/:id', fetchUser, async (req, res) => {
-const { title, description, tag, summary, flashcards, quiz } = req.body;
+// Route 2: Add a new note
+router.post('/addnote', fetchUser, [
+    body('title', 'Enter a valid title').isLength({ min: 1 }),
+    body('description', 'Enter a valid description').isLength({ min: 1 })
+], async (req, res) => {
+    try {
+        const { title, description, tag } = req.body;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
 
-    // Creating a new note object with only provided fields
+        const noteData = {
+            title,
+            description,
+            tag
+        };
+
+        // Assign user ID or wallet address
+        if (req.user && req.user.id) {
+            noteData.user = req.user.id;
+        } else if (req.user && req.user.walletAddress) {
+            noteData.walletAddress = req.user.walletAddress.toLowerCase();
+        } else {
+            return res.status(401).json({ error: "Authentication required" });
+        }
+
+        const note = new Notes(noteData);
+        const savedNote = await note.save();
+        res.json(savedNote);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal server error");
+    }
+});
+
+// Route 3: Update an existing note
+router.put('/updatenote/:id', fetchUser, async (req, res) => {
+    const { title, description, tag, summary, flashcards, quiz } = req.body;
     const newNote = {};
     if (title) newNote.title = title;
     if (description) newNote.description = description;
@@ -61,48 +72,51 @@ const { title, description, tag, summary, flashcards, quiz } = req.body;
     if (quiz !== undefined) newNote.quiz = quiz;
 
     try {
-        // Find the note to be updated
         let note = await Notes.findById(req.params.id);
-        if (!note) return res.status(404).send("Not found");
+        if (!note) return res.status(404).send("Note not found");
 
-        // Check if the note belongs to the authenticated user
-        if (note.user.toString() !== req.user.id) {
-            return res.status(401).send("Not allowed");
+        const userId = req.user?.id;
+        const walletAddress = req.user?.walletAddress?.toLowerCase();
+
+        const isOwner =
+            (userId && note.user?.toString() === userId) ||
+            (walletAddress && note.walletAddress?.toLowerCase() === walletAddress);
+
+        if (!isOwner) {
+            return res.status(401).send("Not authorized");
         }
 
-        // Update the note and return the new one
         note = await Notes.findByIdAndUpdate(req.params.id, { $set: newNote }, { new: true });
         res.json(note);
-
     } catch (error) {
         console.error(error.message);
-        res.status(500).send("Internal error occurred");
+        res.status(500).send("Internal server error");
     }
 });
 
-// Route 4: Deleting a  note using: DELETE "/api/notes/deletenote"
+// Route 4: Delete a note
 router.delete('/deletenote/:id', fetchUser, async (req, res) => {
     try {
-        //find note to be deleted 
         let note = await Notes.findById(req.params.id);
-        if (!note) return res.status(404).send("Not found");
+        if (!note) return res.status(404).send("Note not found");
 
-        // Check if the note belongs to the authenticated user
-        if (note.user.toString() !== req.user.id) {
-            return res.status(401).send("Not allowed");
+        const userId = req.user?.id;
+        const walletAddress = req.user?.walletAddress?.toLowerCase();
+
+        const isOwner =
+            (userId && note.user?.toString() === userId) ||
+            (walletAddress && note.walletAddress?.toLowerCase() === walletAddress);
+
+        if (!isOwner) {
+            return res.status(401).send("Not authorized");
         }
+
         note = await Notes.findByIdAndDelete(req.params.id);
-        res.json({ "Success": "Note has been deleted", note: note });
-    }
-
-    catch (error) {
+        res.json({ success: "Note has been deleted", note });
+    } catch (error) {
         console.error(error.message);
-        res.status(500).send("Internal error occurred");
+        res.status(500).send("Internal server error");
     }
-})
-
-
-
-
+});
 
 module.exports = router;
