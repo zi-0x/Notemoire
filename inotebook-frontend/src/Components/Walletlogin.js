@@ -34,7 +34,7 @@ const WalletLogin = ({ onLogin }) => {
 
   return (
     <div>
-      <button onClick={connectWallet}>Login with MetaMask</button>
+      <button className="metamask-btn" onClick={connectWallet}>Login with MetaMask</button>
       {walletAddress && <p>Logged in as: {walletAddress}</p>}
     </div>
   );

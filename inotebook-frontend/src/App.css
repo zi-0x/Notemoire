@@ -1,3 +1,24 @@
 .card .card-body .card-title {
   font-size: 1.1rem !important;
 }
+
+:root {
+  --primary-color: #8f3bbf;           /* Vibrant Violet */
+  --primary-hover: #5a217a;           /* Deep Violet */
+  --secondary-color: #e09ec3;         /* Soft Pinkish Lavender */
+  --accent-color: #d16ba5;            /* Magical Pink-Purple */
+  --text-primary: #fbeaff;            /* Pale Pinkish Violet */
+  --text-secondary: #e0b3e6;          /* Muted Pink Lavender */
+  --background-primary: #1a0826;      /* Very Dark Purple */
+  --background-secondary: #24113a;    /* Deep Violet Black */
+  --background-tertiary: #3d235a;     /* Tertiary Purple */
+  --border-color: #d16ba5;            /* Pinkish Accent */
+  --shadow-light: 0 1px 3px rgba(209, 107, 165, 0.15);
+  --shadow-medium: 0 4px 6px rgba(209, 107, 165, 0.18);
+  --shadow-heavy: 0 8px 25px rgba(209, 107, 165, 0.25);
+  --border-radius: 16px;
+  --border-radius-small: 8px;
+  --transition: all 0.2s ease-in-out;
+}
+
+
