@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
-const mongURI = "mongodb://localhost:27017/iNotebook";
+
+// Updated MongoDB Atlas connection string
+const mongURI = "mongodb+srv://theamazingpiyush:dOfme60NaaDqWWbD@notemoire.rmroyb4.mongodb.net/iNotebook?retryWrites=true&w=majority";
 
 const connectToMongo = async () => {
     try {
-        await mongoose.connect(mongURI);
-        console.log("Mongoose connected successfully");
+        await mongoose.connect(mongURI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("Mongoose connected successfully to Atlas");
     } catch (error) {
         console.error("Mongoose connection failed:", error);
     }
