@@ -16,7 +16,7 @@ const WalletLogin = ({ onLogin }) => {
       const address = await signer.getAddress();
 
       // Backend call to login/register user
-      const res = await axios.post("http://localhost:5000/api/auth/wallet-login", {
+      const res = await axios.post("https://notemore-dashboard.onrender.com/api/auth/wallet-login", {
         walletAddress: address
       });
 

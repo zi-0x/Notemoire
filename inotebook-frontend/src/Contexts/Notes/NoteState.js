@@ -2,7 +2,7 @@ import { useState } from "react";
 import noteContext from "./Notecontext";
 
 const NoteState = (props) => {
-  const host = "http://localhost:5000";
+  const host = "https://notemore-dashboard.onrender.com";
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial);
   const [walletAddress, setWalletAddress] = useState("");
