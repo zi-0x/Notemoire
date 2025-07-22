@@ -173,7 +173,7 @@ function Widgets() {
                 <div className="widgets__input">
                     <SearchIcon className="widgets__searchIcon" />
                     <input 
-                        placeholder="Search Sociva Sivs" 
+                        placeholder="Search" 
                         type="text" 
                         value={searchTerm}
                         onChange={handleSearch}

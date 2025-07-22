@@ -10,6 +10,8 @@ import { BrowserProvider, Contract } from "ethers";
 function SivBox() {
   const [sivMessage, setSivMessage] = useState("");
   const [avatarName, setAvatarName] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [showPollForm, setShowPollForm] = useState(false);
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState(["", ""]);
@@ -26,6 +28,27 @@ function SivBox() {
           handleSivSubmit();
         }
       }
+      const handleFileChange = (e) => {
+  setSelectedFile(e.target.files[0]);
+};
+
+const uploadFileToCloudinary = async () => {
+  const formData = new FormData();
+  formData.append("file", selectedFile);
+  formData.append("upload_preset", "your_upload_preset"); // Replace with your real one
+  setUploading(true);
+  try {
+    const res = await axios.post("https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload", formData);
+    return res.data.secure_url;
+  } catch (err) {
+    console.error("Upload failed", err);
+    alert("Upload failed!");
+    return "";
+  } finally {
+    setUploading(false);
+  }
+};
+
       // Escape to close poll form
       if (event.key === 'Escape' && showPollForm) {
         setShowPollForm(false);
@@ -60,19 +83,29 @@ function SivBox() {
   };
 
   const handleSivSubmit = async () => {
-    if (!sivMessage.trim()) return;
-    
-    setIsComposing(true);
-    try {
-      await addSiv();
-      setSivMessage("");
-      alert("✅ Siv posted successfully!");
-    } catch (error) {
-      alert("❌ Error posting Siv. Please try again.");
-    } finally {
-      setIsComposing(false);
+  if (!sivMessage.trim() && !selectedFile) return;
+
+  setIsComposing(true);
+  try {
+    let fileUrl = "";
+
+    if (selectedFile) {
+      fileUrl = await uploadFileToCloudinary();
     }
-  };
+
+    const completeMessage = sivMessage + (fileUrl ? `\n📎 ${fileUrl}` : "");
+
+    await addSiv(completeMessage);
+    setSivMessage("");
+    setSelectedFile(null);
+    alert("✅ Siv posted successfully!");
+  } catch (error) {
+    alert("❌ Error posting Siv.");
+  } finally {
+    setIsComposing(false);
+  }
+};
+
 
   const addPoll = async () => {
     // Create a poll object with question and options
@@ -168,8 +201,32 @@ function SivBox() {
 
   useEffect(() => {
     // Use a random name or user input for avatar
-    setAvatarName("Sociva User");
+    setAvatarName("NoteMoire User");
   }, []);
+
+const handleFileChange = (e) => {
+  setSelectedFile(e.target.files[0]);
+};
+
+const uploadFileToCloudinary = async () => {
+  const formData = new FormData();
+  formData.append("file", selectedFile);
+  formData.append("upload_preset", "your_upload_preset"); // Replace with your actual preset
+  setUploading(true);
+  try {
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload", // Replace with your Cloud name
+      formData
+    );
+    return res.data.secure_url;
+  } catch (err) {
+    console.error("Upload failed", err);
+    alert("Upload failed!");
+    return "";
+  } finally {
+    setUploading(false);
+  }
+};
 
   return (
     <div className="sivBox">
@@ -184,7 +241,19 @@ function SivBox() {
             style={{ borderRadius: '50px' }}
           />
         </div>
-        
+
+{selectedFile && (
+  <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textAlign: "center", marginTop: "0.5rem" }}>
+    Selected: {selectedFile.name}
+  </p>
+)}
+
+{uploading && (
+  <p style={{ color: "var(--text-secondary)", fontStyle: "italic" }}>
+    Uploading file...
+  </p>
+)}
+
         {!showPollForm ? (
           <div className="sivBox__buttons">
             <Button
@@ -202,7 +271,27 @@ function SivBox() {
             >
               Add Poll
             </Button>
-          </div>
+          {!selectedFile ? (
+    <>
+      <label htmlFor="fileInput" className="attach-file">Attach a file</label>
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*,video/*,.pdf,.doc,.docx"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+    </>
+  ) : (
+    <button
+      className="sivBox__attachButton"
+      onClick={uploadFileToCloudinary}
+      disabled={uploading}
+    >
+      {uploading ? "Posting..." : "Post File"}
+    </button>
+  )}
+</div>
         ) : (
           <div className="sivBox__pollForm">
             <input

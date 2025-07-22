@@ -454,3 +454,27 @@
     margin-top: -40px !important;
     margin-left: 300px !important;
   }
+
+  .attach-file {
+ 
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--border-radius-small);
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.sivBox__attachButton {
+  margin-left: auto;
+  background: linear-gradient(to right, #8f3bbf, #d16ba5);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
