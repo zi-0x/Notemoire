@@ -58,8 +58,14 @@ router.post('/wallet-login', async (req, res) => {
         const data = { user: { id: user._id } };
         const authToken = jwt.sign(data, JWT_SECRET);
 
+        // Always include all expected fields for frontend
+        const userResponse = {
+            ...user._doc,
+            address: user.walletAddress // For frontend compatibility
+        };
+
         success = true;
-        res.json({ success, authToken, user }); // Send back user as well
+        res.json({ success, authToken, user: userResponse });
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ success, error: 'Internal server error' });
