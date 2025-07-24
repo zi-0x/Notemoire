@@ -9,6 +9,7 @@
   color: var(--text-primary);
   padding: 0.3rem;
   font-family: 'Segoe UI', sans-serif;
+  
 }
 
 .home-container input[type="text"],
@@ -20,6 +21,7 @@
   padding: 0.5rem;
   margin-bottom: 1rem;
   width: 100%;
+  
 }
 
 .home-container input[type="text"]::placeholder,
@@ -45,6 +47,7 @@
   padding: 1.5rem;
   margin-bottom: 2rem;
   border:1px solid  var(--border-color);
+  
 }
 
 /* Optional inner headings */
@@ -103,4 +106,5 @@ min-height: 100vh;
 background-color: var(--background-primary); 
 color: var(--text-primary);
 transition: all 0.3s ease-in-out;
+
 }

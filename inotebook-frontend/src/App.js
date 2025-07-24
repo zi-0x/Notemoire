@@ -9,7 +9,6 @@ import {
 // Importing all required components
 import Navbar from './Components/Navbar';
 import Home from './Components/Home';
-import About from './Components/About';
 import Alert from './Components/Alert';
 import Login from './Components/Login';
 import Signup from './Components/Signup';
@@ -73,20 +72,6 @@ export default function App() {
             }
           />
 
-
-          {/* About route is protected – if not logged in, redirect to / */}
-          <Route
-            path="/about"
-            element={
-              isAuthenticated ? (
-                <div className='container'>
-                  <About />
-                </div>
-              ) : (
-                <Navigate to="/" />
-              )
-            }
-          />
 
           {/* Login and Signup pages wrapped in container */}
           <Route

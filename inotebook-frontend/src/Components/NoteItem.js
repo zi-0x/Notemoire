@@ -14,17 +14,18 @@ const toggleExpanded = () => {
 setExpanded(!expanded);
 };
 
-const handleShareClick = async () => {
-  const encodedText = encodeURIComponent(note.description || '');
-  // If you want to pass a file URL too, do the same for file URL
-  window.open(`http://localhost:3001/sociva?sivText=${encodedText}`, '_blank');
+const handleShareClick = () => {
+  const title = encodeURIComponent(note.title);
+  const desc = encodeURIComponent(note.description);
+  const socivaUrl = `http://localhost:3001/?title=${title}&desc=${desc}`;
+  window.open(socivaUrl, '_blank');
 };
 
-  const handleShareToMedia = () => {
-    setShowShareMenu(false);
-    // Replace this with your actual share logic
-    props.showAlert('Shared to Note Media!', 'success');
-  };
+const handleShareToMedia = () => {
+  const title = encodeURIComponent(note.title);
+  const desc = encodeURIComponent(note.description);
+  window.open(`http://localhost:3001/?title=${title}&desc=${desc}`, '_blank');
+};
 
 console.log("showAI in NoteItem:", props.showAI);
 

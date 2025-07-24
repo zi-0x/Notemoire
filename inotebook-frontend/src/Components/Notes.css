@@ -3,6 +3,7 @@ width: 100%;
 display: flex;
 flex-direction: column;
 align-items: flex-start; 
+
 /* Optional: center cards horizontally */
 }
 

@@ -2,12 +2,13 @@
 max-height: 5.6rem;
 overflow: hidden;
 text-overflow: ellipsis;
-display: -webkit-box;
+display: --webkit-box;
 -webkit-line-clamp: 4;
 -webkit-box-orient: vertical;
 white-space: normal;
 word-break: break-word;
 line-height: 1.4rem;
+
 }
 
 .note-description.expanded {
