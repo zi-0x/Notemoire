@@ -4,49 +4,52 @@ html, body, #root {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Background & layout */
 .landing-container {
   min-height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, #c3dafe, #fdfbfb);
+  background: var(--background-primary);
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Card style */
 .card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 1rem;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 2rem;
   max-width: 600px;
   width: 100%;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-heavy);
   text-align: center;
+  color: var(--text-primary);
 }
 
 /* Text styles */
 .title {
   font-size: 2.5rem;
-  background: linear-gradient(to right, #3b82f6, #6366f1);
+  font-weight: 800;
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 800;
   margin-bottom: 1rem;
 }
 
 .highlight {
-  text-decoration: underline dotted #60a5fa;
+  text-decoration: underline dotted var(--accent-color);
 }
 
 .subtitle {
   font-size: 1.2rem;
-  color: #4b5563;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   line-height: 1.6;
 }
@@ -72,27 +75,29 @@ html, body, #root {
   font-size: 1rem;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
 }
 
+/* Login Button */
 .login-btn {
-  background: linear-gradient(to right, #2563eb, #4f46e5);
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
   color: white;
-  border: none;
 }
 
 .login-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+  box-shadow: 0 6px 20px rgba(209, 107, 165, 0.5);
 }
 
+/* Signup Button */
 .signup-btn {
-  background: white;
-  color: #2563eb;
-  border: 2px solid #2563eb;
+  background: transparent;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
 }
 
 .signup-btn:hover {
-  background: #eff6ff;
+  background: var(--background-tertiary);
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 6px 20px rgba(209, 107, 165, 0.3);
 }

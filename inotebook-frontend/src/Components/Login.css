@@ -1,31 +1,55 @@
+/* Login Page Container */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f4f4f4;
+  background-color: var(--background-primary); /* Very Dark Purple */
   padding: 20px;
 }
 
+/* Login Card */
 .login-card {
-  background-color: #ffffff;
-  padding: 30px 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
+  background-color: var(--background-secondary); /* Deep Violet */
+  padding: 40px 60px;
+  border-radius: var(--border-radius); /* Rounded corners */
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color); /* Pink border */
   text-align: center;
+  width: 100%;
+  max-width: 500px;
 }
 
+/* Wallet Title */
 .login-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: #333;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
 }
 
+/* Wallet Subtitle */
 .login-subtitle {
   font-size: 14px;
-  color: #777;
+  color: var(--text-secondary);
   margin-bottom: 25px;
+}
+
+/* MetaMask Button */
+.metamask-btn {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  border: 2px solid var(--accent-color);
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.metamask-btn:hover {
+  background-color: var(--accent-color);
+  color: var(--background-primary);
+  box-shadow: var(--shadow-light);
 }

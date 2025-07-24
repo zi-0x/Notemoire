@@ -3,6 +3,8 @@ import noteContext from '../Contexts/Notes/Notecontext';
 import NoteItem from './NoteItem';
 import NoteAIActions from './NoteAIActions';
 import { useNavigate } from 'react-router-dom';
+import './Notes.css';
+
 
 const Notes = (props) => {
     const context = useContext(noteContext);
@@ -147,18 +149,15 @@ const Notes = (props) => {
                 </div>
             </div>
 
-            <div className="row my-3">
-                <h2>Your notes</h2>
-                <div className="container">
-                    {notes.length === 0 && "No notes to display"}
-                </div>
-                {notes.map((note) => (
-                    <div className="col-md-4" key={note._id}>
-                        <NoteItem updateNote={updateNote} note={note} showAlert={props.showAlert} />
-                        {props.showAI && (
-                            <NoteAIActions noteId={note._id} noteContent={note.description} note={note} />)}
-                    </div>
-                ))}
+            <div className="notes-container my-3 "> <h2>My notes</h2> 
+             <div className="note-list"> {notes.length === 0 && 
+                <p>No notes to display</p>} 
+                {notes.map((note) => ( 
+                    <NoteItem key={note._id} 
+                     updateNote={updateNote} note={note} 
+                     showAlert={props.showAlert} 
+                     /> ))} 
+              </div>
             </div>
         </>
     );

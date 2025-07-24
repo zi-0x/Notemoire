@@ -1,0 +1,106 @@
+/* Home.css */
+
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  padding: 0.3rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.home-container input[type="text"],
+.home-container textarea {
+  background-color: var(--background-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.home-container input[type="text"]::placeholder,
+.home-container textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Title or heading for home sections (optional if needed) */
+.home-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 1.5rem;
+}
+
+/* Add note section and notes list */
+.add-note-section,
+.notes-list-section {
+  width: 100%;
+  max-width: 800px;
+  background-color: var(--background-secondary);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border:1px solid  var(--border-color);
+}
+
+/* Optional inner headings */
+.section-heading {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.btnaddnote{
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-small);
+  padding: 0.5rem 1.2rem;
+  transition: var(--transition);
+  font-weight: 600;
+}
+
+.btnaddnote:enabled {
+  background-color: var(--accent-color);
+  box-shadow: var(--shadow-light);
+}
+
+.btnaddnote:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.form-control {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+}
+
+.form-control:focus {
+  border-color: var(--accent-color); /* Magical pink-purple */
+  box-shadow: 0 0 0 0.2rem rgba(209, 107, 165, 0.3); /* Light pink glow */
+  outline: none;
+}
+
+.text-danger{
+    color:#bb2b7a;
+}
+
+.app-layout {
+display: flex;
+}
+
+.main-content {
+margin-left: 80px; 
+padding: 2rem;
+width: calc(100% - 220px);
+min-height: 100vh;
+background-color: var(--background-primary); 
+color: var(--text-primary);
+transition: all 0.3s ease-in-out;
+}

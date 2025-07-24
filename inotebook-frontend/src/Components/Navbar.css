@@ -1,0 +1,100 @@
+.sidebar {
+  
+  background-color:  var(--background-primary) ;
+  padding: 20px;
+  border-right: 1px solid var(--border-color);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  width:25vw;
+}
+
+.sidebar__logo {
+  width: 120px;
+  height: auto;
+  margin: 0 auto 30px auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(var(--shadow-light));
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.sidebar-nav li {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  margin-bottom: 4px;
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.sidebar-content {
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+height: 100%;
+}
+
+.sidebar-top {
+display: flex;
+flex-direction: column;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  background-color: var(--background-secondary);
+  color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.nav-link:hover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+  border-radius: 0 2px 2px 0;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white !important;
+  width: 100% !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  margin-top: auto !important;
+  text-transform: none !important;
+  padding: 16px 24px !important;
+  border-radius: 50px !important;
+  border: none !important;
+  box-shadow: var(--shadow-medium) !important;
+  transition: var(--transition) !important;
+  letter-spacing: 0.5px;
+  
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-heavy) !important;
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-color) 100%) !important;
+}

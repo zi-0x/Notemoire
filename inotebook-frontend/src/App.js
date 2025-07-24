@@ -16,6 +16,8 @@ import Signup from './Components/Signup';
 import LandingPage from './Components/Landingpage';
 import Aienhancement from './Components/Aienhancement';
 import './App.css';
+import './Components/./Home.css';
+
 
 import NoteState from './Contexts/Notes/NoteState';
 
@@ -40,11 +42,11 @@ export default function App() {
     <NoteState showAlert={showAlert}>
       <Router>
 
-
+        <div className="app-layout">
         {/* Show Navbar and Alert only if user is authenticated */}
         {isAuthenticated && <Navbar setIsAuthenticated={setIsAuthenticated} />}
         {isAuthenticated && <Alert alert={alert} />}
-
+<div className="main-content">
         <Routes>
           {/* If logged in, show Home inside container. Otherwise, show full-screen LandingPage */}
           <Route
@@ -96,6 +98,8 @@ export default function App() {
             element={<div className='container'><Signup showAlert={showAlert} setIsAuthenticated={setIsAuthenticated} /></div>}
           />
         </Routes>
+        </div>
+</div>
       </Router>
     </NoteState>
   );

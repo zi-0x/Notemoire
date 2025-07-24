@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import noteContext from '../Contexts/Notes/Notecontext';
 
+
 const Addnote = () => {
     const context = useContext(noteContext);
     const { notes, addnote } = context;
@@ -44,7 +45,8 @@ const Addnote = () => {
                                 onChange={onChange}
                             />
                             {note.title.trim().length > 0 && note.title.trim().length < 3 && (
-                                <div className="text-danger">Title must be at least 3 characters.</div>
+                               <div style={{ color: "#bb2b7a" }}>Title must be at least 3 characters.</div>
+
                             )}
                         </div>
 
@@ -59,7 +61,7 @@ const Addnote = () => {
                                 onChange={onChange}
                             />
                             {note.description.trim().length > 0 && note.description.trim().length < 5 && (
-                                <div className="text-danger">Description must be at least 5 characters.</div>
+                                <div style={{ color: "#bb2b7a" }}>Description must be at least 5 characters.</div>
                             )}
                         </div>
 
@@ -74,7 +76,7 @@ const Addnote = () => {
                                 onChange={onChange}
                             />
                             {note.tag.trim().length > 0 && note.tag.trim().length < 2 && (
-                                <div className="text-danger">Tag must be at least 2 characters.</div>
+                                <div style={{ color: "#bb2b7a" }}>Tag must be at least 2 characters.</div>
                             )}
                         </div>
 
@@ -84,7 +86,7 @@ const Addnote = () => {
                                 note.description.trim().length < 5
                             }
                             type="submit"
-                            className="btn btn-primary"
+                            className="btnaddnote"
                             onClick={handleclick}
                         >
                             Add note
