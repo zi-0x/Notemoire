@@ -53,7 +53,7 @@ const Notes = (props) => {
         // e.target.name means whichever component's name is being changed, its name is set to its value 
         setNote({ ...note, [e.target.name]: e.target.value });
     };
-
+console.log("showAI in Notes:", props.showAI);
     if (!authChecked) return null;
 
     return (
@@ -156,6 +156,7 @@ const Notes = (props) => {
                     <NoteItem key={note._id} 
                      updateNote={updateNote} note={note} 
                      showAlert={props.showAlert} 
+                     showAI={props.showAI}
                      /> ))} 
               </div>
             </div>

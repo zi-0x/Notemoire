@@ -1,0 +1,130 @@
+/* Button group */
+.note-ai-btn-group .btn {
+border: 1px solid var(--accent-color);
+color: var(--text-primary);
+background-color: transparent;
+transition: var(--transition);
+font-size: 0.875rem;
+padding: 6px 12px;
+border-radius: var(--border-radius-small);
+}
+
+.note-ai-btn-group .btn:hover {
+background-color: var(--accent-color);
+color: var(--background-primary);
+}
+
+/* Modal Backdrop */
+.note-ai-backdrop {
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background: rgba(0, 0, 0, 0.75);
+z-index: 999;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+/* Modal Container */
+.note-ai-modal {
+background: rgba(255, 255, 255, 0.08);
+backdrop-filter: blur(8px);
+color: var(--text-primary);
+border-radius: var(--border-radius);
+padding: 20px;
+width: 90%;
+max-width: 600px;
+border: 1px solid var(--border-color);
+box-shadow: var(--shadow-medium);
+}
+
+/* Modal Header */
+.note-ai-modal-header {
+display: flex;
+justify-content: space-between;
+margin-bottom: 1rem;
+}
+
+/* Modal Title */
+.note-ai-title {
+font-weight: bold;
+}
+
+/* Close Button */
+.note-ai-close-btn {
+background: transparent;
+border: none;
+color: var(--text-primary);
+font-size: 1.5rem;
+cursor: pointer;
+}
+
+/* Modal Body */
+.note-ai-modal-body {
+max-height: 300px;
+overflow-y: auto;
+margin-bottom: 1.5rem;
+white-space: pre-wrap;
+}
+
+/* Modal Footer */
+.note-ai-modal-footer {
+text-align: right;
+}
+
+.note-ai-modal-footer .btn {
+margin-left: 8px;
+padding: 6px 14px;
+border-radius: var(--border-radius-small);
+transition: var(--transition);
+}
+
+.note-ai-modal-footer .btn:first-child {
+background-color: var(--background-tertiary);
+color: var(--text-primary);
+border: 1px solid var(--accent-color);
+}
+
+.note-ai-modal-footer .btn:first-child:hover {
+background-color: var(--accent-color);
+color: var(--background-primary);
+}
+
+.note-ai-modal-footer .btn:last-child {
+background-color: var(--primary-color);
+color: var(--text-primary);
+border: 1px solid var(--primary-hover);
+}
+
+.note-ai-modal-footer .btn:last-child:hover {
+background-color: var(--primary-hover);
+}
+
+/* Scrollbar customization */
+.note-ai-modal-body::-webkit-scrollbar {
+width: 8px;
+}
+
+.note-ai-modal-body::-webkit-scrollbar-track {
+background: var(--background-secondary); /* Dark purple base */
+border-radius: 10px;
+}
+
+.note-ai-modal-body::-webkit-scrollbar-thumb {
+background-color: var(--accent-color); /* Pink-purple thumb /
+border-radius: 10px;
+border: 2px solid var(--background-secondary); / Optional border for better contrast */
+}
+
+.note-ai-modal-body::-webkit-scrollbar-thumb:hover {
+background-color: var(--primary-color); /* Change on hover */
+}
+
+/* Firefox scrollbar */
+.note-ai-modal-body {
+scrollbar-width: thin;
+scrollbar-color: var(--accent-color) var(--background-secondary);
+}

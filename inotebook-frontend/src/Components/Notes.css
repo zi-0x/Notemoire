@@ -2,8 +2,8 @@
 width: 100%;
 display: flex;
 flex-direction: column;
-align-items: center; 
-padding: 0 3rem;/* Optional: center cards horizontally */
+align-items: flex-start; 
+/* Optional: center cards horizontally */
 }
 
 .note-list {
@@ -12,6 +12,7 @@ max-width: 700px; /* Optional max width */
 display: flex;
 flex-direction: column;
 gap: 20px;
+padding: 0 3rem;
 }
 
 
@@ -23,4 +24,48 @@ margin: 1rem auto; / Centers horizontally with equal left/right margin */
 
 .card {
 width: 100%;
+}
+
+.modal-content {
+  background-color: #1e0038; /* Dark purple */
+  color: #e0b3e6;
+  border-radius: 10px;
+  border: 1px solid #8e44ad;
+}
+
+/* Header text */
+.modal-header .modal-title {
+  color: #e0b3e6;
+}
+
+/* Close button */
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+/* Input fields */
+.modal-body .form-control {
+  background-color: #3d1b5a;
+  color: #e0b3e6;
+  border: 1px solid #8e44ad;
+}
+
+.modal-body .form-control::placeholder {
+  color: #e0b3e6;
+}
+
+/* Button styles */
+.modal-footer .btn-secondary {
+  background-color: #d16ba5;
+  color: #ffffff;
+  border: none;
+}
+
+.modal-footer .btn-primary {
+  background-color: #d16ba5;
+  border: none;
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: #8e44ad;
 }
