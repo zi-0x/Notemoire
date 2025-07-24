@@ -16,9 +16,25 @@ function SivBox() {
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState(["", ""]);
   const [isComposing, setIsComposing] = useState(false);
+  const [prefill, setPrefill] = useState('');
+
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const title = params.get('title');
+  const desc = params.get('desc');
+
+  if (title || desc) {
+    const formatted = `Title: ${title || ''}\nDescription: ${desc || ''}`;
+    setPrefill(formatted);
+    setSivMessage(formatted);
+  }
+}, []);
+
 
   // Handle keyboard shortcuts
   useEffect(() => {
+    
     const handleKeyDown = (event) => {
       // Ctrl/Cmd + Enter to submit
       if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
@@ -93,7 +109,8 @@ const uploadFileToCloudinary = async () => {
       fileUrl = await uploadFileToCloudinary();
     }
 
-    const completeMessage = sivMessage + (fileUrl ? `\n📎 ${fileUrl}` : "");
+    
+    const completeMessage = sivMessage + (selectedFile?.fake ? `\n📎 ${selectedFile.name}` : "");
 
     await addSiv(completeMessage);
     setSivMessage("");
@@ -201,7 +218,7 @@ const uploadFileToCloudinary = async () => {
 
   useEffect(() => {
     // Use a random name or user input for avatar
-    setAvatarName("NoteMoire User");
+    setAvatarName("");
   }, []);
 
 const handleFileChange = (e) => {

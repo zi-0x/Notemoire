@@ -1,5 +1,5 @@
 .feed {
-  flex: 0.5;
+  flex: 0.6;
   background-color: var(--background-primary);
   border-right: 1px solid var(--border-color);
   min-height: 100vh;

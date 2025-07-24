@@ -241,10 +241,10 @@ function Sidebar({ onNavigate, currentView }){
             className="sidebar__siv"
             variant="contained"
             disableElevation
-            onClick={handleSivClick}
+            onClick={() => window.location.href = 'http://localhost:3002/'}
             startIcon={<CreateIcon />}
           >
-            Siv
+            Your Library
           </Button>
         </div>
       );

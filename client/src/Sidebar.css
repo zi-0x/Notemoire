@@ -1,5 +1,5 @@
 .sidebar {
-  flex: 0.25;
+  flex: 0.19;
   background-color:  var(--background-primary) ;
   padding: 20px;
   border-right: 1px solid var(--border-color);
@@ -8,6 +8,8 @@
   top: 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sidebar__logo {

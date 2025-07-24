@@ -1,4 +1,4 @@
-import logo from './Notemoire_logo.png';
+import logo from './Notemoire_welcome.png';
 import Sidebar from "./Sidebar";
 import Feed from "./Feed";
 import Widgets from "./Widgets";

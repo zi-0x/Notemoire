@@ -290,12 +290,12 @@
 }
 
 .widgets__followButton.following {
-  background: #4caf50;
+  background: #ded447;
   color: white;
 }
 
 .widgets__followButton.following:hover {
-  background: #4caf50;
+  background: #ded447;
   color: white;
 }
 
