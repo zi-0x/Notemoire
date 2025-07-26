@@ -1,0 +1,108 @@
+:root {
+  --primary-color: #8f3bbf;           /* Vibrant Violet */
+  --primary-hover: #5a217a;           /* Deep Violet */
+  --secondary-color: #e09ec3;         /* Soft Pinkish Lavender */
+  --accent-color: #d16ba5;            /* Magical Pink-Purple */
+  --text-primary: #fbeaff;            /* Pale Pinkish Violet */
+  --text-secondary: #e0b3e6;          /* Muted Pink Lavender */
+  --background-primary: #1a0826;      /* Very Dark Purple */
+  --background-secondary: #24113a;    /* Deep Violet Black */
+  --background-tertiary: #3d235a;     /* Tertiary Purple */
+  --border-color: #d16ba5;            /* Pinkish Accent */
+  --shadow-light: 0 1px 3px rgba(209, 107, 165, 0.15);
+  --shadow-medium: 0 4px 6px rgba(209, 107, 165, 0.18);
+  --shadow-heavy: 0 8px 25px rgba(209, 107, 165, 0.25);
+  --border-radius: 16px;
+  --border-radius-small: 8px;
+  --transition: all 0.2s ease-in-out;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.welcome-message {
+  text-align: center;
+  margin-top: 20px;
+  color: var(--text-primary);
+}
+
+.App-logo {
+  width: 80vw;
+  max-width: 800px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: gentleBounce 3s ease-in-out infinite;
+  }
+}
+
+@keyframes gentleBounce {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.App-header {
+  background: linear-gradient(135deg, #430940 0%, #3b0831 60%, #2a103b 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.app-body {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  margin: 0 auto;
+  opacity: 0;
+  transition: opacity 0.8s ease-in;
+  padding: 0 20px;
+}
+
+.app-body.fade-in {
+  opacity: 1;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
