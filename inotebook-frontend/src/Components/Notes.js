@@ -149,15 +149,17 @@ console.log("showAI in Notes:", props.showAI);
                 </div>
             </div>
 
-            <div className="notes-container my-3 "> <h2>My notes</h2> 
+            <div className="notes-container my-3 "> <h2>My Notes</h2> 
              <div className="note-list"> {notes.length === 0 && 
                 <p>No notes to display</p>} 
-                {notes.map((note) => ( 
-                    <NoteItem key={note._id} 
-                     updateNote={updateNote} note={note} 
-                     showAlert={props.showAlert} 
-                     showAI={props.showAI}
-                     /> ))} 
+                {[...notes].reverse().map((note) => (
+                     <NoteItem key={note._id} 
+                        updateNote={updateNote} 
+                        note={note} 
+                        showAlert={props.showAlert} 
+                        showAI={props.showAI} 
+  />
+))}
               </div>
             </div>
         </>

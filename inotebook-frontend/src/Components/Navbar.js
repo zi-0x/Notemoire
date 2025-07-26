@@ -24,7 +24,7 @@ return (
           <Link className={`nav-link ${location.pathname === "/" ? "active" : ""}`} to="/">Home</Link>
         </li>
         <li>
-          <Link className={`nav-link ${location.pathname === "http://localhost:3001/" ? "active" : ""}`} to="http://localhost:3001/">Note Media</Link>
+          <Link className={`nav-link ${location.pathname === "http://localhost:3001/" ? "active" : ""}`} to="http://localhost:3001/">NoteMoire</Link>
         </li>
         <li>
           <Link className={`nav-link ${location.pathname === "/ai" ? "active" : ""}`} to="/ai">AI Enhancements</Link>

@@ -22,4 +22,27 @@
   --transition: all 0.2s ease-in-out;
 }
 
+/* For WebKit browsers */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--background-secondary); /* optional, or use a dark purple shade */
+  border-radius: 10px;
+}
+
+/* Thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #d16ba5; /* pink accent color */
+  border-radius: 10px;
+  border: 2px solid var(--background-secondary); /* optional for spacing */
+}
+
+/* Thumb hover effect */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #e09ec3; /* a lighter pink hover */
+}
+
 
