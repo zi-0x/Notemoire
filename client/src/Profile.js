@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, } from "react";
 import "./Profile.css";
 import Avatar from 'react-avatar';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -7,7 +7,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import EditIcon from "@mui/icons-material/Edit";
-import FollowIcon from "@mui/icons-material/PersonAdd";
+
 import Button from "@mui/material/Button";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
@@ -16,7 +16,7 @@ import Post from "./Post";
 
 function Profile({ onBack, userAddress }) {
   const [activeTab, setActiveTab] = useState(0);
-  const [userProfile, setUserProfile] = useState({
+  const [userProfile, /*setUserProfile*/] = useState({
     name: userAddress ? `User ${userAddress.slice(-4)}` : "Sociva User",
     address: userAddress || "0x1234...5678",
     bio: "Building the future of decentralized social media 🚀",
@@ -67,13 +67,7 @@ function Profile({ onBack, userAddress }) {
     setActiveTab(newValue);
   };
 
-  const handleFollow = () => {
-    setUserProfile(prev => ({
-      ...prev,
-      isFollowing: !prev.isFollowing,
-      followers: prev.isFollowing ? prev.followers - 1 : prev.followers + 1
-    }));
-  };
+ 
 
   const handleStatClick = (statType) => {
     switch(statType) {

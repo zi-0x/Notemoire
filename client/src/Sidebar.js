@@ -15,7 +15,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CreateIcon from "@mui/icons-material/Create";
 import Button from "@mui/material/Button";
-import Badge from "@mui/material/Badge";
+
 import Collapse from "@mui/material/Collapse";
 import logo from "./Notemoire_logo.png";
 
@@ -24,7 +24,7 @@ function Sidebar({ onNavigate, currentView }){
   const [showMore, setShowMore] = useState(false);
   const [notifications, setNotifications] = useState(3);
   const [messages, setMessages] = useState(7);
-  const [userStats, setUserStats] = useState({
+  const [userStats, ] = useState({
     sivs: 42,
     following: 198,
     followers: 156
@@ -124,11 +124,7 @@ function Sidebar({ onNavigate, currentView }){
     setShowMore(!showMore);
   };
 
-  const handleSivClick = () => {
-    console.log("Opening Siv composer");
-    // In a real app, this would open a compose modal or focus the SivBox
-    document.querySelector('.sivBox__input input')?.focus();
-  };
+  
 
   return (
         <div className="sidebar">

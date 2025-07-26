@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import SivBox from "./SivBox.js";
 import Post from "./Post.js";
 import "./Feed.css";
@@ -10,40 +10,47 @@ import { BrowserProvider, Contract } from "ethers";
 function Feed() {
   const [posts, setPosts] = useState([]);
 
-  const isProbablyCID = (str) => {
+  // FIXED: Wrap isProbablyCID in useCallback to prevent dependency changes
+  const isProbablyCID = useCallback((str) => {
     return /^[a-zA-Z0-9]{46,}$/.test(str); // crude base58/base32 CID check
-  };
+  }, []);
 
-  const getUpdatedSivs = async (allSivs, address) => {
-    const updatedSivs = [];
+  // Now getUpdatedSivs has a stable dependency
+  const getUpdatedSivs = useCallback(
+    async (allSivs, address) => {
+      const updatedSivs = [];
 
-    for (let i = 0; i < allSivs.length; i++) {
-      let ipfsText;
-      if (isProbablyCID(allSivs[i].sivText)) {
-        try {
-          const res = await fetch(`https://w3s.link/ipfs/${allSivs[i].sivText}`);
-          ipfsText = await res.text();
-        } catch (e) {
-          ipfsText = "[Failed to load content]";
+      for (let i = 0; i < allSivs.length; i++) {
+        let ipfsText;
+        if (isProbablyCID(allSivs[i].sivText)) {
+          try {
+            const res = await fetch(
+              `https://w3s.link/ipfs/${allSivs[i].sivText}`
+            );
+            ipfsText = await res.text();
+          } catch (e) {
+            ipfsText = "[Failed to load content]";
+          }
+        } else {
+          ipfsText = allSivs[i].sivText;
         }
-      } else {
-        ipfsText = allSivs[i].sivText;
+
+        updatedSivs.push({
+          id: allSivs[i].id,
+          cid: allSivs[i].sivText,
+          sivText: ipfsText,
+          isDeleted: allSivs[i].isDeleted,
+          username: allSivs[i].username,
+          personal: allSivs[i].username.toLowerCase() === address.toLowerCase(),
+        });
       }
 
-      updatedSivs.push({
-        id: allSivs[i].id,
-        cid: allSivs[i].sivText,
-        sivText: ipfsText,
-        isDeleted: allSivs[i].isDeleted,
-        username: allSivs[i].username,
-        personal: allSivs[i].username.toLowerCase() === address.toLowerCase(),
-      });
-    }
+      return updatedSivs.reverse();
+    },
+    [isProbablyCID]
+  ); // isProbablyCID is now stable
 
-    return updatedSivs.reverse();
-  };
-
-  const getAllSivs = async () => {
+  const getAllSivs = useCallback(async () => {
     try {
       const { ethereum } = window;
       if (ethereum) {
@@ -64,11 +71,11 @@ function Feed() {
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  };
+  }, [getUpdatedSivs]);
 
   useEffect(() => {
     getAllSivs();
-  }, []);
+  }, [getAllSivs]);
 
   const deleteSiv = (key) => async () => {
     try {
@@ -92,13 +99,25 @@ function Feed() {
     }
   };
 
+  // Refresh callback function
+  const handleRefreshFeed = () => {
+    console.log("Refreshing feed after new post...");
+    getAllSivs(); // Re-fetch all posts
+  };
+
+  // Optional: Additional callback when post is created
+  const handleNewPost = () => {
+    console.log("New post created!");
+    // You can add any additional logic here if needed
+  };
+
   return (
     <div className="feed">
       <div className="feed_header">
         <h2>Home</h2>
       </div>
 
-      <SivBox />
+      <SivBox onPost={handleNewPost} refreshFeed={handleRefreshFeed} />
 
       <div className="feed__content">
         <FlipMove>

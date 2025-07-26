@@ -1,7 +1,7 @@
-import React, { forwardRef, useState, useEffect } from "react";
+import React, { forwardRef, useState, useEffect, useCallback } from "react";
 import "./Post.css";
 import Avatar from "react-avatar";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+// REMOVED: VerifiedUserIcon import (unused)
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -9,7 +9,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import PublishIcon from "@mui/icons-material/Publish";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Poll from "./Poll";
-import IPFSModal from "./IPFSModal"; // Import the modal we created earlier
+import IPFSModal from "./IPFSModal";
 
 const Post = forwardRef(
   ({ displayName, text, personal, onClick, cid }, ref) => {
@@ -31,66 +31,276 @@ const Post = forwardRef(
     // IPFS Modal state
     const [showIPFSModal, setShowIPFSModal] = useState(false);
     const [selectedCID, setSelectedCID] = useState(null);
+    const [ipfsMetadata, setIpfsMetadata] = useState(null);
+    const [loadingMetadata, setLoadingMetadata] = useState(false);
 
-    // Extract CID from embedded IPFS link in text
-    // Fix the CID extraction in Post.js
+    // SIMPLIFIED CID validation - more permissive
+    const isValidCID = (cidToCheck) => {
+      if (!cidToCheck || typeof cidToCheck !== "string") return false;
+      // More relaxed validation - just check if it's a reasonable length and alphanumeric
+      return cidToCheck.length >= 20 && /^[a-zA-Z0-9]+$/.test(cidToCheck);
+    };
+
+    // SIMPLIFIED CID extraction with multiple patterns
     const extractCIDFromText = (text) => {
-      // Look for the IPFS link pattern and extract the CID
-      const ipfsMatch = text.match(/🔗\s*IPFS:\s*([a-zA-Z0-9]{46,})/);
-      return ipfsMatch ? ipfsMatch[1] : null;
+      console.log("Extracting CID from text:", text);
+
+      // Try multiple patterns to find CID
+      const patterns = [
+        /🔗\s*IPFS:\s*([a-zA-Z0-9]{20,})/i, // Standard IPFS format
+        /IPFS:\s*([a-zA-Z0-9]{20,})/i, // Without emoji
+        /ipfs\/([a-zA-Z0-9]{20,})/i, // Direct IPFS path
+        /([a-zA-Z0-9]{46,})/, // Any long alphanumeric string
+      ];
+
+      for (const pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) {
+          const foundCID = match[1];
+          console.log("Found CID:", foundCID);
+          return foundCID;
+        }
+      }
+
+      console.log("No CID found in text");
+      return null;
     };
 
-    // Render text with clickable IPFS links
-    const renderTextWithIPFSLinks = (text) => {
-      const ipfsRegex = /(🔗\s*IPFS:\s*)([a-zA-Z0-9]+)/g;
-      const parts = text.split(ipfsRegex);
-
-      return parts.map((part, index) => {
-        // Check if this part is a CID (follows the IPFS: pattern)
-        if (ipfsRegex.test(`🔗 IPFS: ${part}`) && /^[a-zA-Z0-9]+$/.test(part)) {
-          return (
-            <span
-              key={index}
-              className="ipfs-link"
-              onClick={() => handleIPFSClick(part)}
-              style={{ cursor: "pointer" }}
-            >
-              🔗 IPFS: {part.substring(0, 8)}...
-            </span>
-          );
-        }
-        // Check if this is the "🔗 IPFS: " prefix
-        else if (part.match(/🔗\s*IPFS:\s*/)) {
-          return null; // Don't render the prefix separately
-        }
-        return part;
-      });
+    // SIMPLIFIED PDF detection
+    const hasPDF = () => {
+      return (
+        text.includes("📄") ||
+        text.includes(".pdf") ||
+        text.toLowerCase().includes("pdf")
+      );
     };
 
-    const handleIPFSClick = (cidFromText) => {
-      const cidToUse = cidFromText || cid || extractCIDFromText(text);
+    // Get any CID available
+    const getAvailableCID = () => {
+      // Try prop first, then extract from text
+      if (cid && isValidCID(cid)) {
+        console.log("Using CID from prop:", cid);
+        return cid;
+      }
 
-      // Validate the CID before opening modal
-      if (cidToUse && isValidCID(cidToUse)) {
-        console.log("Opening IPFS modal for CID:", cidToUse);
-        setSelectedCID(cidToUse);
-        setShowIPFSModal(true);
-      } else {
-        console.error("Invalid CID:", cidToUse);
-        alert("❌ Invalid IPFS link");
+      const extractedCID = extractCIDFromText(text);
+      if (extractedCID && isValidCID(extractedCID)) {
+        console.log("Using extracted CID:", extractedCID);
+        return extractedCID;
+      }
+
+      console.log("No valid CID found");
+      return null;
+    };
+
+    // Fetch IPFS metadata with better error handling
+    const fetchIPFSMetadata = async (cidToUse) => {
+      setLoadingMetadata(true);
+      try {
+        console.log("Fetching metadata for CID:", cidToUse);
+
+        // Try multiple gateways for metadata
+        const gateways = [
+          `https://gateway.pinata.cloud/ipfs/${cidToUse}`,
+          `https://ipfs.io/ipfs/${cidToUse}`,
+          `https://cloudflare-ipfs.com/ipfs/${cidToUse}`,
+        ];
+
+        let metadata = null;
+
+        for (const gateway of gateways) {
+          try {
+            const response = await fetch(gateway, { method: "HEAD" });
+            if (response.ok) {
+              const contentType =
+                response.headers.get("content-type") || "unknown";
+              const contentLength = response.headers.get("content-length");
+              const lastModified = response.headers.get("last-modified");
+
+              metadata = {
+                cid: cidToUse,
+                filename: extractPDFFromText(text) || "Unknown file",
+                contentType: contentType,
+                size: contentLength ? parseInt(contentLength) : null,
+                lastModified: lastModified,
+                workingGateway: gateway,
+                gateways: gateways,
+              };
+              break;
+            }
+          } catch (err) {
+            console.log("Gateway failed:", gateway, err.message);
+            continue;
+          }
+        }
+
+        if (!metadata) {
+          throw new Error("All gateways failed");
+        }
+
+        console.log("Fetched metadata:", metadata);
+        setIpfsMetadata(metadata);
+      } catch (error) {
+        console.error("Error fetching IPFS metadata:", error);
+
+        // Fallback metadata
+        const fallbackMetadata = {
+          cid: cidToUse,
+          filename: extractPDFFromText(text) || "Unknown file",
+          contentType: "application/pdf",
+          size: null,
+          error: error.message,
+          gateways: [
+            `https://gateway.pinata.cloud/ipfs/${cidToUse}`,
+            `https://ipfs.io/ipfs/${cidToUse}`,
+            `https://cloudflare-ipfs.com/ipfs/${cidToUse}`,
+          ],
+        };
+
+        setIpfsMetadata(fallbackMetadata);
+      } finally {
+        setLoadingMetadata(false);
       }
     };
 
-    // ... rest of your existing functions (handleVote, handleLike, etc.)
+    // Extract PDF filename from text
+    const extractPDFFromText = (text) => {
+      // Look for filename after 📄 emoji
+      const pdfMatch = text.match(/📄\s*([^\n🔗]+)/);
+      if (pdfMatch) {
+        return pdfMatch[1].trim();
+      }
 
-    const isPoll = () => {
+      // Look for .pdf files
+      const pdfFileMatch = text.match(/([^\s]+\.pdf)/i);
+      if (pdfFileMatch) {
+        return pdfFileMatch[1];
+      }
+
+      // Look for cloudinary URLs
+      const cloudinaryMatch = text.match(
+        /https?:\/\/res\.cloudinary\.com\/[^\s]+/i
+      );
+      if (cloudinaryMatch) {
+        return cloudinaryMatch[0];
+      }
+
+      return null;
+    };
+
+    // SIMPLIFIED PDF button
+    const renderPDFButton = () => {
+      const handlePDFClick = () => {
+        console.log("=== PDF BUTTON CLICKED ===");
+        console.log("Text:", text);
+        console.log("CID prop:", cid);
+
+        // First try to find a direct URL in text
+        const directURL = text.match(/https?:\/\/[^\s]+\.pdf/i);
+        if (directURL) {
+          console.log("Opening direct PDF URL:", directURL[0]);
+          window.open(directURL[0], "_blank", "noopener,noreferrer");
+          return;
+        }
+
+        // Try to use CID for IPFS
+        const cidToUse = getAvailableCID();
+        if (cidToUse) {
+          const gateways = [
+            `https://gateway.pinata.cloud/ipfs/${cidToUse}`,
+            `https://ipfs.io/ipfs/${cidToUse}`,
+            `https://cloudflare-ipfs.com/ipfs/${cidToUse}`,
+          ];
+
+          console.log("Opening IPFS PDF:", gateways[0]);
+          window.open(gateways[0], "_blank", "noopener,noreferrer");
+        } else {
+          console.error("No valid PDF link found");
+          alert("❌ Could not find a valid PDF link");
+        }
+      };
+
+      return (
+        <div style={{ marginTop: "8px" }}>
+          <button
+            onClick={handlePDFClick}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "8px 12px",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              color: "white",
+              border: "none",
+              borderRadius: "20px",
+              cursor: "pointer",
+              fontSize: "12px",
+              fontWeight: "500",
+              boxShadow: "0 2px 8px rgba(102, 126, 234, 0.2)",
+              transition: "all 0.3s ease",
+              minWidth: "100px",
+              justifyContent: "center",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-1px)";
+              e.target.style.boxShadow = "0 4px 12px rgba(102, 126, 234, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow = "0 2px 8px rgba(102, 126, 234, 0.2)";
+            }}
+          >
+            <span style={{ fontSize: "14px" }}>📄</span>
+            View PDF
+          </button>
+        </div>
+      );
+    };
+
+    // SIMPLIFIED text processing
+    const renderContent = () => {
+      // Clean up the text for display
+      let cleanText = text
+        .replace(/📄\s*[^\n🔗]+/g, "") // Remove PDF filename line
+        .replace(/🔗\s*IPFS:\s*[^\s\n]+/gi, "") // Remove IPFS line
+        .replace(/https?:\/\/[^\s]+\.pdf/gi, "") // Remove direct PDF URLs
+        .trim();
+
+      return (
+        <div>
+          <div style={{ whiteSpace: "pre-wrap" }}>{cleanText}</div>
+          {hasPDF() && renderPDFButton()}
+        </div>
+      );
+    };
+
+    // Enhanced IPFS click handler
+    const handleIPFSClick = async () => {
+      const cidToUse = getAvailableCID();
+
+      if (!cidToUse) {
+        alert("❌ No IPFS link found");
+        return;
+      }
+
+      console.log("IPFS button clicked, fetching metadata for CID:", cidToUse);
+
+      // Fetch metadata before opening modal
+      await fetchIPFSMetadata(cidToUse);
+
+      setSelectedCID(cidToUse);
+      setShowIPFSModal(true);
+    };
+
+    // FIXED: Wrap isPoll in useCallback to create stable reference
+    const isPoll = useCallback(() => {
       try {
         const parsed = JSON.parse(text);
         return parsed.type === "poll";
       } catch (e) {
         return false;
       }
-    };
+    }, [text]);
 
     const getPollData = () => {
       try {
@@ -101,6 +311,8 @@ const Post = forwardRef(
       }
     };
 
+    // FIXED: Add isPoll to useEffect dependency array
+    // Alternative: Just use text directly since isPoll depends on it anyway
     useEffect(() => {
       if (isPoll()) {
         try {
@@ -110,7 +322,8 @@ const Post = forwardRef(
           console.error("Error parsing poll data:", e);
         }
       }
-    }, [text]);
+    }, [text, isPoll]); // This is the most explicit and clear
+    // Add isPoll to dependencies
 
     const handleVote = (pollId, selectedOption) => {
       setPollData((prevData) => {
@@ -123,6 +336,7 @@ const Post = forwardRef(
       setVotedPolls((prev) => new Set([...prev, pollId]));
     };
 
+    // Other handlers (unchanged)
     const handleLike = () => {
       setIsLiked(!isLiked);
       setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
@@ -151,14 +365,7 @@ const Post = forwardRef(
       setShareCount((prev) => prev + 1);
       alert("📤 Siv copied to clipboard!");
     };
-    const isValidCID = (cid) => {
-      return (
-        cid &&
-        typeof cid === "string" &&
-        cid.length >= 46 &&
-        /^[a-zA-Z0-9]+$/.test(cid)
-      );
-    };
+
     const getDisplayName = (name) => {
       if (!name) return "Anonymous";
       if (name.length > 20) {
@@ -198,20 +405,59 @@ const Post = forwardRef(
                   pollId={currentPollData.id}
                 />
               ) : (
-                <p>{renderTextWithIPFSLinks(text)}</p>
-              )}
-
-              {/* Only show separate IPFS link if there's no embedded one in text */}
-              {cid && !extractCIDFromText(text) && (
-                <span
-                  className="ipfs-link"
-                  onClick={() => handleIPFSClick()}
-                  style={{ cursor: "pointer" }}
-                >
-                  📂 View on IPFS
-                </span>
+                renderContent()
               )}
             </div>
+
+            {/* IPFS Button with better availability check */}
+            {getAvailableCID() && (
+              <div style={{ marginTop: "8px" }}>
+                <button
+                  onClick={handleIPFSClick}
+                  disabled={loadingMetadata}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "8px 12px",
+                    background: loadingMetadata
+                      ? "linear-gradient(135deg, #666, #888)"
+                      : "linear-gradient(135deg, #2d004c, #4a0080)",
+                    color: loadingMetadata ? "#ccc" : "#a88bfd",
+                    border: "1px solid rgba(168, 139, 253, 0.3)",
+                    borderRadius: "20px",
+                    cursor: loadingMetadata ? "wait" : "pointer",
+                    fontSize: "12px",
+                    fontWeight: "500",
+                    boxShadow: "0 2px 8px rgba(45, 0, 76, 0.2)",
+                    transition: "all 0.3s ease",
+                    minWidth: "100px",
+                    justifyContent: "center",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!loadingMetadata) {
+                      e.target.style.transform = "translateY(-1px)";
+                      e.target.style.boxShadow =
+                        "0 4px 12px rgba(45, 0, 76, 0.3)";
+                      e.target.style.color = "#c4a8ff";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!loadingMetadata) {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow =
+                        "0 2px 8px rgba(45, 0, 76, 0.2)";
+                      e.target.style.color = "#a88bfd";
+                    }
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>
+                    {loadingMetadata ? "⏳" : "🔗"}
+                  </span>
+                  {loadingMetadata ? "Loading..." : "View IPFS"}
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="post__footer">
@@ -256,11 +502,15 @@ const Post = forwardRef(
           </div>
         </div>
 
-        {/* IPFS Modal */}
+        {/* IPFS Modal with Metadata */}
         <IPFSModal
           isOpen={showIPFSModal}
-          onClose={() => setShowIPFSModal(false)}
+          onClose={() => {
+            setShowIPFSModal(false);
+            setIpfsMetadata(null);
+          }}
           cid={selectedCID}
+          metadata={ipfsMetadata}
         />
       </div>
     );

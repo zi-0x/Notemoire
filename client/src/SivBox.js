@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Sociva from "./utils/socivaContract.json";
 import "./SivBox.css";
 import Avatar from "react-avatar";
 import { Button } from "@mui/material";
-import axios from "axios";
+
 import { SocivaContractAddress } from "./config.js";
 import { BrowserProvider, Contract } from "ethers";
-import { registerNote } from "./blockchain.js";
+
 import { createStorachaClient } from "./w3client.js"; // Note: This now returns Pinata client
 
-function SivBox() {
+function SivBox({ onPost, refreshFeed }) {
   const [sivMessage, setSivMessage] = useState("");
   const [avatarName, setAvatarName] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
+  
   const [showPollForm, setShowPollForm] = useState(false);
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState(["", ""]);
   const [isComposing, setIsComposing] = useState(false);
-  const [prefill, setPrefill] = useState("");
+  
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -27,88 +27,12 @@ function SivBox() {
 
     if (title || desc) {
       const formatted = `Title: ${title || ""}\nDescription: ${desc || ""}`;
-      setPrefill(formatted);
       setSivMessage(formatted);
     }
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-        if (showPollForm) {
-          handlePollSubmit();
-        } else if (sivMessage.trim()) {
-          handleSivSubmit();
-        }
-      }
-      if (event.key === "Escape" && showPollForm) {
-        setShowPollForm(false);
-        setPollQuestion("");
-        setPollOptions(["", ""]);
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [sivMessage, showPollForm, pollQuestion, pollOptions]);
-
-  // IPFS upload via Pinata for ALL messages and files
-  // In SivBox.js, update handleSivSubmit:
-  const handleSivSubmit = async () => {
-    if (!sivMessage.trim() && !selectedFile) {
-      alert("Please enter a message or select a file.");
-      return;
-    }
-
-    setIsComposing(true);
-    try {
-      let messageToSend = sivMessage.trim();
-
-      // Try Pinata IPFS upload for ALL messages
-      if (messageToSend || selectedFile) {
-        try {
-          console.log("Attempting Pinata IPFS upload...");
-          const client = await createStorachaClient();
-
-          let cid;
-          if (selectedFile) {
-            cid = await client.uploadFileWrapper(selectedFile);
-          } else {
-            cid = await client.uploadText(messageToSend);
-          }
-
-          console.log("✅ Uploaded to IPFS via Pinata with CID:", cid);
-
-          // Include the CID in the message for clickable links
-          messageToSend = `${sivMessage}\n🔗 IPFS: ${cid}`;
-
-          // Store the message with embedded IPFS link
-          await addSiv(messageToSend);
-        } catch (pinataError) {
-          console.error(
-            "Pinata IPFS upload failed, posting text directly:",
-            pinataError
-          );
-          await addSiv(messageToSend); // No CID if upload fails
-        }
-      } else {
-        await addSiv(messageToSend);
-      }
-
-      // Clear form
-      setSivMessage("");
-      setSelectedFile(null);
-      alert("✅ Siv posted successfully!");
-    } catch (error) {
-      console.error("Error posting Siv:", error);
-      alert("❌ Error posting Siv. Check console for details.");
-    } finally {
-      setIsComposing(false);
-    }
-  };
-
   // Store Siv on blockchain - Updated to accept CID parameter
-  const addSiv = async (text, cid = null) => {
+  const addSiv = useCallback(async (text, cid = null) => {
     try {
       const provider = new BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
@@ -118,10 +42,7 @@ function SivBox() {
         signer
       );
 
-      // If you want to store the CID in the blockchain text, uncomment this:
-      // const textToStore = cid ? `${text}\n🔗 IPFS: ${cid}` : text;
-
-      // For now, just store the original text (CID is passed but not used)
+      // Store the complete message (with IPFS link embedded)
       const tx = await socivaContract.addSiv(text, false);
       await tx.wait();
       console.log("✅ Siv stored on-chain:", tx.hash);
@@ -134,10 +55,10 @@ function SivBox() {
       console.log("Error submitting new Siv:", error);
       throw error;
     }
-  };
+  }, []); // No dependencies needed for this function
 
-  // Store poll on blockchain
-  const addPoll = async () => {
+   
+  const addPoll = useCallback(async () => {
     const pollData = {
       type: "poll",
       id: `poll_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -161,13 +82,93 @@ function SivBox() {
       const tx = await socivaContract.addSiv(JSON.stringify(pollData), false);
       await tx.wait();
       console.log("✅ Poll created:", tx.hash);
+
+      // Call refresh functions after successful poll creation
+      if (refreshFeed) refreshFeed();
+      if (onPost) onPost();
     } catch (error) {
       console.log("Error submitting new Poll:", error);
       throw error;
     }
-  };
+  }, [pollQuestion, pollOptions, refreshFeed, onPost]); // Add all dependencies
 
-  const handlePollSubmit = async () => {
+ 
+  const handleSivSubmit = useCallback(async () => {
+    if (!sivMessage.trim() && !selectedFile) {
+      alert("Please enter a message or select a file.");
+      return;
+    }
+
+    setIsComposing(true);
+    try {
+      let messageToSend = sivMessage.trim() || "File upload";
+      let cid = null;
+
+      // Try Pinata IPFS upload for messages and files
+      try {
+        console.log("Attempting Pinata IPFS upload...");
+        const client = await createStorachaClient();
+
+        if (selectedFile) {
+          console.log(
+            "Uploading file to IPFS:",
+            selectedFile.name,
+            selectedFile.type
+          );
+
+          // Upload file to IPFS
+          cid = await client.uploadFileWrapper(selectedFile);
+
+          
+          const fileInfo =
+            selectedFile.type === "application/pdf" ? "📄" : "📎";
+          messageToSend = sivMessage.trim()
+            ? `${sivMessage}\n${fileInfo} ${selectedFile.name}\n🔗 IPFS: ${cid}`
+            : `${fileInfo} ${selectedFile.name}\n🔗 IPFS: ${cid}`;
+
+          console.log("✅ File uploaded to IPFS with CID:", cid);
+        } else {
+          // Upload text to IPFS
+          cid = await client.uploadText(messageToSend);
+          messageToSend = `${sivMessage}\n🔗 IPFS: ${cid}`;
+          console.log("✅ Text uploaded to IPFS with CID:", cid);
+        }
+
+        // Store the message with embedded IPFS link
+        await addSiv(messageToSend);
+      } catch (pinataError) {
+        console.error(
+          "Pinata IPFS upload failed, posting directly:",
+          pinataError
+        );
+
+        // If IPFS upload fails, still post the message (without IPFS link)
+        if (selectedFile) {
+          alert("⚠️ IPFS upload failed. File cannot be shared without IPFS.");
+          return;
+        } else {
+          await addSiv(messageToSend); // Post text without IPFS
+        }
+      }
+
+      // Clear form
+      setSivMessage("");
+      setSelectedFile(null);
+      alert("✅ Siv posted successfully!");
+
+      // Call refresh functions after successful post
+      if (onPost) onPost();
+      if (refreshFeed) refreshFeed();
+    } catch (error) {
+      console.error("Error posting Siv:", error);
+      alert("❌ Error posting Siv. Check console for details.");
+    } finally {
+      setIsComposing(false);
+    }
+  }, [sivMessage, selectedFile, onPost, refreshFeed, addSiv]); // Add addSiv dependency
+
+  //Add addPoll to handlePollSubmit dependencies
+  const handlePollSubmit = useCallback(async () => {
     if (
       !pollQuestion.trim() ||
       pollOptions.filter((opt) => opt.trim()).length < 2
@@ -187,7 +188,36 @@ function SivBox() {
     } finally {
       setIsComposing(false);
     }
-  };
+  }, [pollQuestion, pollOptions, addPoll]); // Add addPoll dependency
+
+  // Add handleSivSubmit and handlePollSubmit to useEffect dependencies
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+        if (showPollForm) {
+          handlePollSubmit();
+        } else if (sivMessage.trim() || selectedFile) {
+          handleSivSubmit();
+        }
+      }
+      if (event.key === "Escape" && showPollForm) {
+        setShowPollForm(false);
+        setPollQuestion("");
+        setPollOptions(["", ""]);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [
+    sivMessage,
+    showPollForm,
+    pollQuestion,
+    pollOptions,
+    selectedFile,
+    handlePollSubmit,
+    handleSivSubmit,
+  ]);
 
   const togglePollForm = () => {
     setShowPollForm(!showPollForm);
@@ -215,27 +245,10 @@ function SivBox() {
   }, []);
 
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
-
-  // Alternative file upload via Cloudinary (if you prefer over IPFS)
-  const uploadFileToCloudinary = async () => {
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("upload_preset", "your_upload_preset");
-    setUploading(true);
-    try {
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload",
-        formData
-      );
-      return res.data.secure_url;
-    } catch (err) {
-      console.error("Upload failed", err);
-      alert("Upload failed!");
-      return "";
-    } finally {
-      setUploading(false);
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      console.log("File selected:", file.name, file.type);
     }
   };
 
@@ -253,28 +266,58 @@ function SivBox() {
           <input
             onChange={(e) => setSivMessage(e.target.value)}
             value={sivMessage}
-            placeholder="What's happening?"
+            placeholder={
+              selectedFile ? `File: ${selectedFile.name}` : "What's happening?"
+            }
             type="text"
             style={{ borderRadius: "50px" }}
           />
         </div>
 
         {selectedFile && (
-          <p
+          <div
             style={{
               fontSize: "0.9rem",
               color: "var(--text-secondary)",
               textAlign: "center",
               marginTop: "0.5rem",
+              padding: "8px",
+              backgroundColor: "var(--background-secondary)",
+              borderRadius: "8px",
             }}
           >
-            Selected: {selectedFile.name}
-          </p>
+            <span style={{ marginRight: "8px" }}>
+              {selectedFile.type === "application/pdf" ? "📄" : "📎"}
+            </span>
+            Selected: <strong>{selectedFile.name}</strong>
+            <br />
+            <small>({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</small>
+            <button
+              type="button"
+              onClick={() => setSelectedFile(null)}
+              style={{
+                marginLeft: "10px",
+                background: "none",
+                border: "none",
+                color: "#bb2b7a",
+                cursor: "pointer",
+                fontSize: "16px",
+              }}
+            >
+              ✕
+            </button>
+          </div>
         )}
 
-        {uploading && (
-          <p style={{ color: "var(--text-secondary)", fontStyle: "italic" }}>
-            Uploading file...
+        {isComposing && (
+          <p
+            style={{
+              color: "var(--text-secondary)",
+              fontStyle: "italic",
+              textAlign: "center",
+            }}
+          >
+            🚀 Uploading to IPFS & Blockchain... Please confirm MetaMask
           </p>
         )}
 
@@ -283,7 +326,7 @@ function SivBox() {
             <Button
               onClick={handleSivSubmit}
               type="button"
-              disabled={!sivMessage.trim() || isComposing}
+              disabled={(!sivMessage.trim() && !selectedFile) || isComposing}
               className="sivBox__sivButton"
             >
               {isComposing ? "Posting..." : "Siv"}
@@ -295,28 +338,16 @@ function SivBox() {
             >
               Add Poll
             </Button>
-            {!selectedFile ? (
-              <>
-                <label htmlFor="fileInput" className="attach-file">
-                  Attach a file
-                </label>
-                <input
-                  type="file"
-                  id="fileInput"
-                  accept="image/*,video/*,.pdf,.doc,.docx"
-                  style={{ display: "none" }}
-                  onChange={handleFileChange}
-                />
-              </>
-            ) : (
-              <button
-                className="sivBox__attachButton"
-                onClick={uploadFileToCloudinary}
-                disabled={uploading}
-              >
-                {uploading ? "Posting..." : "Post File"}
-              </button>
-            )}
+            <label htmlFor="fileInput" className="attach-file">
+              {selectedFile ? "Change File" : "Attach File"}
+            </label>
+            <input
+              type="file"
+              id="fileInput"
+              accept="image/*,video/*,.pdf,.doc,.docx"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
           </div>
         ) : (
           <div className="sivBox__pollForm">
