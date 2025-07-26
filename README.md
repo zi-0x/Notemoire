@@ -1,3 +1,8 @@
+[![Get a Thorough Run through of Notemoire](https://img.youtube.com/vi/YJOaasEOOjU/0.jpg)](https://youtu.be/YJOaasEOOjU?si=Va2iaGkm-l0VoVBS)
+
+
+
+
 # 🧙‍♂️ Notemoire
 
 **Notemoire** is a blockchain-based, AI-powered note-sharing dApp designed for secure storage, smart summarization, and decentralized ownership of academic content. This platform empowers students and educators to create, share, and verify notes using Ethereum, IPFS, and AI tools.
