@@ -6,6 +6,8 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import { SocivaContractAddress } from "./config.js";
 import { BrowserProvider, Contract } from "ethers";
+import { registerNote } from "./blockchain.js";
+import { createStorachaClient } from "./w3client.js"; // Note: This now returns Pinata client
 
 function SivBox() {
   const [sivMessage, setSivMessage] = useState("");
@@ -16,73 +18,97 @@ function SivBox() {
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState(["", ""]);
   const [isComposing, setIsComposing] = useState(false);
-  const [prefill, setPrefill] = useState('');
+  const [prefill, setPrefill] = useState("");
 
-
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  const title = params.get('title');
-  const desc = params.get('desc');
-
-  if (title || desc) {
-    const formatted = `Title: ${title || ''}\nDescription: ${desc || ''}`;
-    setPrefill(formatted);
-    setSivMessage(formatted);
-  }
-}, []);
-
-
-  // Handle keyboard shortcuts
   useEffect(() => {
-    
+    const params = new URLSearchParams(window.location.search);
+    const title = params.get("title");
+    const desc = params.get("desc");
+
+    if (title || desc) {
+      const formatted = `Title: ${title || ""}\nDescription: ${desc || ""}`;
+      setPrefill(formatted);
+      setSivMessage(formatted);
+    }
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (event) => {
-      // Ctrl/Cmd + Enter to submit
-      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
         if (showPollForm) {
           handlePollSubmit();
         } else if (sivMessage.trim()) {
           handleSivSubmit();
         }
       }
-      const handleFileChange = (e) => {
-  setSelectedFile(e.target.files[0]);
-};
-
-const uploadFileToCloudinary = async () => {
-  const formData = new FormData();
-  formData.append("file", selectedFile);
-  formData.append("upload_preset", "your_upload_preset"); // Replace with your real one
-  setUploading(true);
-  try {
-    const res = await axios.post("https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload", formData);
-    return res.data.secure_url;
-  } catch (err) {
-    console.error("Upload failed", err);
-    alert("Upload failed!");
-    return "";
-  } finally {
-    setUploading(false);
-  }
-};
-
-      // Escape to close poll form
-      if (event.key === 'Escape' && showPollForm) {
+      if (event.key === "Escape" && showPollForm) {
         setShowPollForm(false);
         setPollQuestion("");
         setPollOptions(["", ""]);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [sivMessage, showPollForm, pollQuestion, pollOptions]);
 
-  const addSiv = async () => {
-    let siv = {
-      sivText: sivMessage,
-      isDeleted: false,
-    };
+  // IPFS upload via Pinata for ALL messages and files
+  // In SivBox.js, update handleSivSubmit:
+  const handleSivSubmit = async () => {
+    if (!sivMessage.trim() && !selectedFile) {
+      alert("Please enter a message or select a file.");
+      return;
+    }
 
+    setIsComposing(true);
+    try {
+      let messageToSend = sivMessage.trim();
+
+      // Try Pinata IPFS upload for ALL messages
+      if (messageToSend || selectedFile) {
+        try {
+          console.log("Attempting Pinata IPFS upload...");
+          const client = await createStorachaClient();
+
+          let cid;
+          if (selectedFile) {
+            cid = await client.uploadFileWrapper(selectedFile);
+          } else {
+            cid = await client.uploadText(messageToSend);
+          }
+
+          console.log("✅ Uploaded to IPFS via Pinata with CID:", cid);
+
+          // Include the CID in the message for clickable links
+          messageToSend = `${sivMessage}\n🔗 IPFS: ${cid}`;
+
+          // Store the message with embedded IPFS link
+          await addSiv(messageToSend);
+        } catch (pinataError) {
+          console.error(
+            "Pinata IPFS upload failed, posting text directly:",
+            pinataError
+          );
+          await addSiv(messageToSend); // No CID if upload fails
+        }
+      } else {
+        await addSiv(messageToSend);
+      }
+
+      // Clear form
+      setSivMessage("");
+      setSelectedFile(null);
+      alert("✅ Siv posted successfully!");
+    } catch (error) {
+      console.error("Error posting Siv:", error);
+      alert("❌ Error posting Siv. Check console for details.");
+    } finally {
+      setIsComposing(false);
+    }
+  };
+
+  // Store Siv on blockchain - Updated to accept CID parameter
+  const addSiv = async (text, cid = null) => {
     try {
       const provider = new BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
@@ -91,46 +117,32 @@ const uploadFileToCloudinary = async () => {
         Sociva.abi,
         signer
       );
-      let sivTx = await socivaContract.addSiv(siv.sivText, siv?.isDeleted);
-      console.log(sivTx);
+
+      // If you want to store the CID in the blockchain text, uncomment this:
+      // const textToStore = cid ? `${text}\n🔗 IPFS: ${cid}` : text;
+
+      // For now, just store the original text (CID is passed but not used)
+      const tx = await socivaContract.addSiv(text, false);
+      await tx.wait();
+      console.log("✅ Siv stored on-chain:", tx.hash);
+
+      // Log the CID for reference
+      if (cid) {
+        console.log("📁 IPFS CID:", cid);
+      }
     } catch (error) {
       console.log("Error submitting new Siv:", error);
+      throw error;
     }
   };
 
-  const handleSivSubmit = async () => {
-  if (!sivMessage.trim() && !selectedFile) return;
-
-  setIsComposing(true);
-  try {
-    let fileUrl = "";
-
-    if (selectedFile) {
-      fileUrl = await uploadFileToCloudinary();
-    }
-
-    
-    const completeMessage = sivMessage + (selectedFile?.fake ? `\n📎 ${selectedFile.name}` : "");
-
-    await addSiv(completeMessage);
-    setSivMessage("");
-    setSelectedFile(null);
-    alert("✅ Siv posted successfully!");
-  } catch (error) {
-    alert("❌ Error posting Siv.");
-  } finally {
-    setIsComposing(false);
-  }
-};
-
-
+  // Store poll on blockchain
   const addPoll = async () => {
-    // Create a poll object with question and options
     const pollData = {
-      type: 'poll',
+      type: "poll",
       id: `poll_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       question: pollQuestion,
-      options: pollOptions.filter(option => option.trim() !== ''),
+      options: pollOptions.filter((option) => option.trim() !== ""),
       votes: {},
       sivText: `Poll: ${pollQuestion}`,
       isDeleted: false,
@@ -144,24 +156,28 @@ const uploadFileToCloudinary = async () => {
         Sociva.abi,
         signer
       );
-      // Store poll data as JSON string in sivText
-      let pollTx = await socivaContract.addSiv(JSON.stringify(pollData), false);
-      console.log('Poll created:', pollTx);
+
+      // Pass two parameters to match your deployed contract
+      const tx = await socivaContract.addSiv(JSON.stringify(pollData), false);
+      await tx.wait();
+      console.log("✅ Poll created:", tx.hash);
     } catch (error) {
       console.log("Error submitting new Poll:", error);
+      throw error;
     }
   };
 
   const handlePollSubmit = async () => {
-    if (!pollQuestion.trim() || pollOptions.filter(opt => opt.trim()).length < 2) {
+    if (
+      !pollQuestion.trim() ||
+      pollOptions.filter((opt) => opt.trim()).length < 2
+    ) {
       alert("Please enter a question and at least 2 options for your poll.");
       return;
     }
-    
     setIsComposing(true);
     try {
       await addPoll();
-      // Reset form
       setShowPollForm(false);
       setPollQuestion("");
       setPollOptions(["", ""]);
@@ -170,28 +186,6 @@ const uploadFileToCloudinary = async () => {
       alert("❌ Error creating poll. Please try again.");
     } finally {
       setIsComposing(false);
-    }
-  };
-
-  const sendSiv = async (e) => {
-    e.preventDefault();
-    try {
-      await addSiv();
-      setSivMessage("");
-    } catch (error) {
-      console.error("Error sending siv:", error);
-    }
-  };
-
-  const sendPoll = async (e) => {
-    e.preventDefault();
-    try {
-      await addPoll();
-      setPollQuestion("");
-      setPollOptions(["", ""]);
-      setShowPollForm(false);
-    } catch (error) {
-      console.error("Error sending poll:", error);
     }
   };
 
@@ -217,59 +211,72 @@ const uploadFileToCloudinary = async () => {
   };
 
   useEffect(() => {
-    // Use a random name or user input for avatar
     setAvatarName("");
   }, []);
 
-const handleFileChange = (e) => {
-  setSelectedFile(e.target.files[0]);
-};
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
 
-const uploadFileToCloudinary = async () => {
-  const formData = new FormData();
-  formData.append("file", selectedFile);
-  formData.append("upload_preset", "your_upload_preset"); // Replace with your actual preset
-  setUploading(true);
-  try {
-    const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload", // Replace with your Cloud name
-      formData
-    );
-    return res.data.secure_url;
-  } catch (err) {
-    console.error("Upload failed", err);
-    alert("Upload failed!");
-    return "";
-  } finally {
-    setUploading(false);
-  }
-};
+  // Alternative file upload via Cloudinary (if you prefer over IPFS)
+  const uploadFileToCloudinary = async () => {
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("upload_preset", "your_upload_preset");
+    setUploading(true);
+    try {
+      const res = await axios.post(
+        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload",
+        formData
+      );
+      return res.data.secure_url;
+    } catch (err) {
+      console.error("Upload failed", err);
+      alert("Upload failed!");
+      return "";
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="sivBox">
       <form>
         <div className="sivBox__input">
-          <Avatar name={avatarName} size="50" round={true} color="#bb2b7a" fgColor="#ffffff" />
+          <Avatar
+            name={avatarName}
+            size="50"
+            round={true}
+            color="#bb2b7a"
+            fgColor="#ffffff"
+          />
           <input
             onChange={(e) => setSivMessage(e.target.value)}
             value={sivMessage}
             placeholder="What's happening?"
             type="text"
-            style={{ borderRadius: '50px' }}
+            style={{ borderRadius: "50px" }}
           />
         </div>
 
-{selectedFile && (
-  <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textAlign: "center", marginTop: "0.5rem" }}>
-    Selected: {selectedFile.name}
-  </p>
-)}
+        {selectedFile && (
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "var(--text-secondary)",
+              textAlign: "center",
+              marginTop: "0.5rem",
+            }}
+          >
+            Selected: {selectedFile.name}
+          </p>
+        )}
 
-{uploading && (
-  <p style={{ color: "var(--text-secondary)", fontStyle: "italic" }}>
-    Uploading file...
-  </p>
-)}
+        {uploading && (
+          <p style={{ color: "var(--text-secondary)", fontStyle: "italic" }}>
+            Uploading file...
+          </p>
+        )}
 
         {!showPollForm ? (
           <div className="sivBox__buttons">
@@ -288,27 +295,29 @@ const uploadFileToCloudinary = async () => {
             >
               Add Poll
             </Button>
-          {!selectedFile ? (
-    <>
-      <label htmlFor="fileInput" className="attach-file">Attach a file</label>
-      <input
-        type="file"
-        id="fileInput"
-        accept="image/*,video/*,.pdf,.doc,.docx"
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
-    </>
-  ) : (
-    <button
-      className="sivBox__attachButton"
-      onClick={uploadFileToCloudinary}
-      disabled={uploading}
-    >
-      {uploading ? "Posting..." : "Post File"}
-    </button>
-  )}
-</div>
+            {!selectedFile ? (
+              <>
+                <label htmlFor="fileInput" className="attach-file">
+                  Attach a file
+                </label>
+                <input
+                  type="file"
+                  id="fileInput"
+                  accept="image/*,video/*,.pdf,.doc,.docx"
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
+              </>
+            ) : (
+              <button
+                className="sivBox__attachButton"
+                onClick={uploadFileToCloudinary}
+                disabled={uploading}
+              >
+                {uploading ? "Posting..." : "Post File"}
+              </button>
+            )}
+          </div>
         ) : (
           <div className="sivBox__pollForm">
             <input
@@ -317,7 +326,7 @@ const uploadFileToCloudinary = async () => {
               placeholder="Ask a question..."
               className="sivBox__pollQuestion"
             />
-            
+
             {pollOptions.map((option, index) => (
               <div key={index} className="sivBox__pollOption">
                 <input
@@ -337,7 +346,7 @@ const uploadFileToCloudinary = async () => {
                 )}
               </div>
             ))}
-            
+
             <div className="sivBox__pollActions">
               <Button
                 onClick={addPollOption}
@@ -346,7 +355,7 @@ const uploadFileToCloudinary = async () => {
               >
                 Add Option
               </Button>
-              
+
               <div className="sivBox__pollButtons">
                 <Button
                   onClick={() => {
@@ -360,7 +369,11 @@ const uploadFileToCloudinary = async () => {
                 </Button>
                 <Button
                   onClick={handlePollSubmit}
-                  disabled={!pollQuestion.trim() || pollOptions.filter(opt => opt.trim()).length < 2 || isComposing}
+                  disabled={
+                    !pollQuestion.trim() ||
+                    pollOptions.filter((opt) => opt.trim()).length < 2 ||
+                    isComposing
+                  }
                   className="sivBox__submitPoll"
                 >
                   {isComposing ? "Creating..." : "Create Poll"}

@@ -1,21 +1,14 @@
-const main =async ()=>{
-    const contractFactory= await ethers.getContractFactory("socivaContract");
-    const contract= await contractFactory.deploy();
-    await contract.waitForDeployment();
-    const address = await contract.getAddress(); // ✅ ethers v6+
+const hre = require("hardhat");
 
-  console.log("Contract deployed to:", address);
+async function main() {
+  const NoteRegistry = await hre.ethers.getContractFactory("NoteRegistry");
+  const contract = await NoteRegistry.deploy();
+  await contract.waitForDeployment();
 
+  console.log("✅ Deployed to:", await contract.getAddress());
 }
 
-const runMain = async() => {
-    try {
-      await main();
-      process.exit(0);
-    } catch(error) {
-      console.log(error);
-      process.exit(1);
-    }
-  }
-  
-  runMain();
+main().catch((err) => {
+  console.error(err);
+  process.exitCode = 1;
+});

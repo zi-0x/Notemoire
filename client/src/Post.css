@@ -143,3 +143,233 @@
   font-size: 12px;
   color: var(--text-secondary);
 }
+
+.ipfs-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background-color: #2d004c;
+  color: #a88bfd;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.ipfs-link:hover {
+  background-color: #3d0075;
+  text-decoration: underline;
+}
+
+/* IPFS Modal Styles */
+.ipfs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+
+.ipfs-modal {
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ipfs-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #2d004c, #4a0080);
+}
+
+.ipfs-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ipfs-modal-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ipfs-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.ipfs-modal-content {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.ipfs-content-section {
+  margin-bottom: 20px;
+}
+
+.ipfs-content-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ipfs-content-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--background-secondary);
+  padding: 16px;
+  border-radius: 12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  border-left: 4px solid var(--primary-color);
+}
+
+.ipfs-metadata {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.ipfs-metadata-item {
+  background: var(--background-secondary);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.ipfs-metadata-item strong {
+  color: var(--primary-color);
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.ipfs-cid {
+  font-family: 'Courier New', monospace;
+  background: var(--background-secondary);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  word-break: break-all;
+  border: 1px solid var(--border-color);
+}
+
+.ipfs-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.ipfs-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ipfs-error {
+  color: #e74c3c;
+  text-align: center;
+  padding: 20px;
+}
+
+.ipfs-retry-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 12px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.ipfs-retry-btn:hover {
+  background: var(--secondary-color);
+}
+
+/* Add these styles to your existing Post.css */
+
+.wallet-badge {
+  color: #1DA1F2;
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.wallet-badge .MuiSvgIcon-root {
+  font-size: 16px !important;
+}
+
+.post__headerText h3 {
+  cursor: help; /* Shows hand cursor on hover to indicate full address in tooltip */
+}
+
+/* Improve avatar spacing for wallet addresses */
+.post__avatar {
+  margin-right: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+}
