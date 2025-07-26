@@ -7,6 +7,11 @@
 > 🔄 **Instead, clone the repository locally for the best experience**  
 > ⚙️ **Always start _both_ applications (Dashboard & Sociva) before using any features**
 
+## ⚠️ Prerequisite
+
+Before using Notemoire, make sure you have MetaMask installed and set up.
+You won’t be able to access most features unless your wallet is connected and funded with Sepolia ETH.
+
 ---
 
 ## ▶️ How to Start Notemoire
@@ -51,11 +56,6 @@ PORT=5000 npm start
 ```
 
 ---
-
-## ⚠️ Prerequisite
-
-Before using Notemoire, make sure you have MetaMask installed and set up.
-You won’t be able to access most features unless your wallet is connected and funded with Sepolia ETH.
 
 ---
 
