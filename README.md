@@ -52,6 +52,13 @@ PORT=5000 npm start
 
 ---
 
+## ⚠️ Prerequisite
+
+Before using Notemoire, make sure you have MetaMask installed and set up.
+You won’t be able to access most features unless your wallet is connected and funded with Sepolia ETH.
+
+---
+
 ## 🦊 How to Set Up MetaMask
 
 Watch this [YouTube guide](https://youtu.be/-5ugtAt4t1A)  
