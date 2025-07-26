@@ -105,7 +105,7 @@ Then:
        cd server
        npm install
        cd client
-       npm install
+       npm install --legacy-peer-deps
        $env:PORT=5000; npm start   # For Windows PowerShell
 
 
