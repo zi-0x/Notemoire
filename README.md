@@ -1,7 +1,6 @@
-[![Get a Thorough Walkthrough of Notemoire](https://img.youtube.com/vi/YJOaasEOOjU/hqdefault.jpg)](https://youtu.be/YJOaasEOOjU)
+[![Get a Thorough Run through of Notemoire](https://img.youtube.com/vi/YJOaasEOOjU/0.jpg)](https://youtu.be/YJOaasEOOjU?si=Va2iaGkm-l0VoVBS)
 
-
-
+Get a Thorough Run through of Notemoire 
 
 # 🧙‍♂️ Notemoire
 
