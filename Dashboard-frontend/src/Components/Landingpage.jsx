@@ -9,7 +9,7 @@ export default function LandingPage() {
     <div className="landing-container">
       <div className="card">
         <h1 className="title">
-          Welcome to <span className="highlight">iNotebook</span>
+          Welcome to <span className="highlight">NoteMoire</span>
         </h1>
         <p className="subtitle">
           Effortless. Elegant. Encrypted. <br />
@@ -17,10 +17,7 @@ export default function LandingPage() {
         </p>
         <div className="button-group">
           <button className="btn login-btn" onClick={() => navigate("/login")}>
-            🚪 Login
-          </button>
-          <button className="btn signup-btn" onClick={() => navigate("/signup")}>
-            ✍️ Sign Up
+            ✨ Flick and Click to Access Your Grimoire
           </button>
         </div>
       </div>

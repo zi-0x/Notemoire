@@ -54,18 +54,10 @@ html, body, #root {
   line-height: 1.6;
 }
 
-/* Buttons */
+/* Button */
 .button-group {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-@media (min-width: 500px) {
-  .button-group {
-    flex-direction: row;
-    justify-content: center;
-  }
+  justify-content: center;
 }
 
 .btn {
@@ -87,17 +79,4 @@ html, body, #root {
 .login-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(209, 107, 165, 0.5);
-}
-
-/* Signup Button */
-.signup-btn {
-  background: transparent;
-  color: var(--accent-color);
-  border: 2px solid var(--accent-color);
-}
-
-.signup-btn:hover {
-  background: var(--background-tertiary);
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(209, 107, 165, 0.3);
 }
