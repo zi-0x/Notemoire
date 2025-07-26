@@ -14,51 +14,6 @@ You won’t be able to access most features unless your wallet is connected and 
 
 ---
 
-## ▶️ How to Start Notemoire
-
-### 1. Start the Dashboard Frontend
-
-```bash
-cd Dashboard-frontend
-npm install
-$env:PORT=4000; npm start   # For Windows PowerShell
-```
-
-💡 For macOS/Linux or Git Bash:
-
-```bash
-PORT=4000 npm start
-```
-
----
-
-### 2. Open a New Terminal
-
-- Use `Ctrl + Shift + \`` (backtick)  
-  or click the ➕ plus icon in your terminal to open a new session.
-
----
-
-### 3. Start the Sociva App (Server & Client)
-
-```bash
-cd server
-npm install
-cd client
-npm install --legacy-peer-deps
-$env:PORT=5000; npm start   # For Windows PowerShell
-```
-
-💡 For macOS/Linux:
-
-```bash
-PORT=5000 npm start
-```
-
----
-
----
-
 ## 🦊 How to Set Up MetaMask
 
 Watch this [YouTube guide](https://youtu.be/-5ugtAt4t1A)  
@@ -115,6 +70,48 @@ Then:
 - ETH should arrive shortly
 
 ---
+
+## ▶️ How to Start Notemoire
+
+### 1. Start the Dashboard Frontend
+
+```bash
+cd Dashboard-frontend
+npm install
+$env:PORT=4000; npm start   # For Windows PowerShell
+```
+
+💡 For macOS/Linux or Git Bash:
+
+```bash
+PORT=4000 npm start
+```
+
+---
+
+### 2. Open a New Terminal
+
+- Use `Ctrl + Shift + \`` (backtick)  
+  or click the ➕ plus icon in your terminal to open a new session.
+
+---
+
+### 3. Start the Sociva App (Server & Client)
+
+```bash
+cd server
+npm install
+cd client
+npm install --legacy-peer-deps
+$env:PORT=5000; npm start   # For Windows PowerShell
+```
+
+💡 For macOS/Linux:
+
+```bash
+PORT=5000 npm start
+```
+
 
 ## 🛠️ Features of Notemoire
 
