@@ -87,19 +87,26 @@ Then:
 
 ---
 
-## ▶️ HOW TO START NOTEMOIRE
+## ▶️ How to Start Notemoire
+1. Start the Dashboard Frontend
 
-1. cd Notemoire
-       cd Dashboard
-       cd Dashboard-frontend
+       cd Notemoire/Dashboard/Dashboard-frontend
        npm install
-       $env:PORT=4000; npm start
+       $env:PORT=4000; npm start   # For Windows PowerShell
 
-2. open a new terminal by CTRL+SHIFT+` or by clicking the plus icon
-3. cd Sociva
-       cd server
+       💡 Use PORT=4000 npm start if you're on macOS/Linux or using a UNIX-compatible terminal like Git Bash.
+
+2. Open a New Terminal
+
+       Use `Ctrl + Shift + `` (backtick) or click the ➕ plus icon in your terminal to open a new terminal session.
+
+3. Start the Sociva App (Server & Client)
+
+       cd Notemoire/Sociva/server
        npm install
-       cd ..
-       cd client 
+       cd ../client
        npm install
-       $env:PORT=5000; npm start
+       $env:PORT=5000; npm start   # For Windows PowerShell
+
+
+       💡 Again, for macOS/Linux: use PORT=5000 npm start
