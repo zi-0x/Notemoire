@@ -6,7 +6,7 @@
 
 ## 🦊 HOW TO SETUP METAMASK?
 
-Follow this youtube link:
+Follow this youtube link: https://youtu.be/-5ugtAt4t1A
 
 OR
 
