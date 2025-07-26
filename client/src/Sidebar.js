@@ -244,7 +244,7 @@ function Sidebar({ onNavigate, currentView }){
             onClick={() => window.location.href = 'http://localhost:3002/'}
             startIcon={<CreateIcon />}
           >
-            Your Library
+            Your Grimoire
           </Button>
         </div>
       );
