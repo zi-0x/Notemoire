@@ -76,10 +76,11 @@ Then:
 ---
 
 ## ▶️ How to Start Notemoire
-
+git clone --branch master https://github.com/zi-0x/Notemoire.git 
 ### 1. Start the Dashboard Frontend
 
 ```bash
+cd Notemoire
 cd Dashboard-frontend
 npm install
 $env:PORT=4000; npm start   # For Windows PowerShell
