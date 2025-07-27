@@ -109,6 +109,7 @@ npm install
 cd ..
 cd client
 npm install --legacy-peer-deps
+npm install ethers --legacy-peer-deps
 $env:PORT=5000; npm start   # For Windows PowerShell
 ```
 
